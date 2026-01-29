@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
+import kotlin.collections.emptyList
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -41,22 +42,25 @@ public class ContextualPromptExecutor(
         logger.debug { "Executing LLM call (event id: $eventId, prompt: $prompt, tools: [${tools.joinToString { it.name }}])" }
         context.pipeline.onLLMCallStarting(eventId, context.executionInfo, context.runId, prompt, model, tools, context)
 
-        val responses = executor.execute(prompt, model, tools)
-
-        logger.trace { "Finished LLM call (event id: $eventId) with responses: [${responses.joinToString { "${it.role}: ${it.content}" }}]" }
-        context.pipeline.onLLMCallCompleted(
-            eventId,
-            context.executionInfo,
-            context.runId,
-            prompt,
-            model,
-            tools,
-            responses,
-            null,
-            context
-        )
-
-        return responses
+        try {
+            val responses = executor.execute(prompt, model, tools)
+            logger.trace { "Finished LLM call (event id: $eventId) with responses: [${responses.joinToString { "${it.role}: ${it.content}" }}]" }
+            context.pipeline.onLLMCallCompleted(
+                eventId,
+                context.executionInfo,
+                context.runId,
+                prompt,
+                model,
+                tools,
+                responses,
+                null,
+                context
+            )
+            return responses
+        } catch (e: Throwable) {
+            context.pipeline.onLLMCallFailed(eventId, context.executionInfo, context.runId, prompt, model, tools, context, e)
+            throw e
+        }
     }
 
     /**

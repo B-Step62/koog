@@ -83,6 +83,7 @@ val included = setOf(
     ":rag:vector-storage",
     ":http-client:http-client-core",
     ":http-client:http-client-ktor",
+    ":serialization:serialization-core",
     ":utils",
 )
 

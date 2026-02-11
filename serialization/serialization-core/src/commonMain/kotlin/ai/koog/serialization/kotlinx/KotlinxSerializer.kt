@@ -25,7 +25,7 @@ public class KotlinxSerializer(
     }
 
     override fun <T> deserializeFromJSONElement(value: JSONElement, typeToken: TypeToken): T {
-        return json.decodeFromJsonElement(kotlinxSerializer(typeToken), value.toKxJsonElement())
+        return json.decodeFromJsonElement(kotlinxSerializer(typeToken), value.toKotlinxJsonElement())
     }
 }
 

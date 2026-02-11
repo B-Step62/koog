@@ -11,6 +11,9 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 
+/**
+ * General [KotlinxSerializer] test
+ */
 class KotlinxSerializerTest {
     @Serializable
     data class TestPerson(

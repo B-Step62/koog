@@ -2,12 +2,12 @@
 
 package ai.koog.serialization
 
-import ai.koog.serialization.kotlinx.KxJSONArraySerializer
-import ai.koog.serialization.kotlinx.KxJSONElementSerializer
-import ai.koog.serialization.kotlinx.KxJSONLiteralSerializer
-import ai.koog.serialization.kotlinx.KxJSONNullSerializer
-import ai.koog.serialization.kotlinx.KxJSONObjectSerializer
-import ai.koog.serialization.kotlinx.KxJSONPrimitiveSerializer
+import ai.koog.serialization.kotlinx.KotlinxJSONArraySerializer
+import ai.koog.serialization.kotlinx.KotlinxJSONElementSerializer
+import ai.koog.serialization.kotlinx.KotlinxJSONLiteralSerializer
+import ai.koog.serialization.kotlinx.KotlinxJSONNullSerializer
+import ai.koog.serialization.kotlinx.KotlinxJSONObjectSerializer
+import ai.koog.serialization.kotlinx.KotlinxJSONPrimitiveSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonUnquotedLiteral
 import kotlin.jvm.JvmStatic
@@ -18,7 +18,7 @@ import kotlin.jvm.JvmStatic
  * This sealed hierarchy provides a dynamic JSON model that can be constructed
  * and manipulated independently of any specific JSON serialization library.
  */
-@Serializable(with = KxJSONElementSerializer::class)
+@Serializable(with = KotlinxJSONElementSerializer::class)
 public sealed interface JSONElement
 
 /**
@@ -26,7 +26,7 @@ public sealed interface JSONElement
  *
  * @property entries map of string keys to JSON elements
  */
-@Serializable(with = KxJSONObjectSerializer::class)
+@Serializable(with = KotlinxJSONObjectSerializer::class)
 public data class JSONObject(
     val entries: Map<String, JSONElement>
 ) : JSONElement
@@ -36,7 +36,7 @@ public data class JSONObject(
  *
  * @property elements list of JSON elements
  */
-@Serializable(with = KxJSONArraySerializer::class)
+@Serializable(with = KotlinxJSONArraySerializer::class)
 public data class JSONArray(
     val elements: List<JSONElement>
 ) : JSONElement
@@ -44,7 +44,7 @@ public data class JSONArray(
 /**
  * JSON primitive value (string, number, boolean, or null).
  */
-@Serializable(with = KxJSONPrimitiveSerializer::class)
+@Serializable(with = KotlinxJSONPrimitiveSerializer::class)
 public sealed interface JSONPrimitive : JSONElement {
     /**
      * Raw string content of this primitive.
@@ -136,7 +136,7 @@ public sealed interface JSONPrimitive : JSONElement {
  * @property content raw string content of the literal
  * @property isString whether this represents a JSON string type
  */
-@Serializable(with = KxJSONLiteralSerializer::class)
+@Serializable(with = KotlinxJSONLiteralSerializer::class)
 public data class JSONLiteral(
     override val content: String,
     override val isString: Boolean
@@ -145,7 +145,7 @@ public data class JSONLiteral(
 /**
  * JSON null value.
  */
-@Serializable(with = KxJSONNullSerializer::class)
+@Serializable(with = KotlinxJSONNullSerializer::class)
 public data object JSONNull : JSONPrimitive {
     override val content: String = "null"
     override val isString: Boolean = false

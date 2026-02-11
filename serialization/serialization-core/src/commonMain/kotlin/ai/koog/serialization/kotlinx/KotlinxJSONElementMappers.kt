@@ -55,34 +55,34 @@ public fun JsonPrimitive.toJSONPrimitive(): JSONPrimitive = when (this) {
 /**
  * Converts [JSONElement] to kotlinx-serialization [JsonElement].
  */
-public fun JSONElement.toKxJsonElement(): JsonElement = when (this) {
-    is JSONObject -> toKxJsonObject()
-    is JSONArray -> toKxJsonArray()
-    is JSONPrimitive -> toKxJsonPrimitive()
+public fun JSONElement.toKotlinxJsonElement(): JsonElement = when (this) {
+    is JSONObject -> toKotlinxJsonObject()
+    is JSONArray -> toKotlinxJsonArray()
+    is JSONPrimitive -> toKotlinxJsonPrimitive()
 }
 
 /**
  * Converts [JSONObject] to kotlinx-serialization [JsonObject].
  */
-public fun JSONObject.toKxJsonObject(): JsonObject = buildJsonObject {
+public fun JSONObject.toKotlinxJsonObject(): JsonObject = buildJsonObject {
     entries.forEach { (key, value) ->
-        put(key, value.toKxJsonElement())
+        put(key, value.toKotlinxJsonElement())
     }
 }
 
 /**
  * Converts [JSONArray] to kotlinx-serialization [JsonArray].
  */
-public fun JSONArray.toKxJsonArray(): JsonArray = buildJsonArray {
+public fun JSONArray.toKotlinxJsonArray(): JsonArray = buildJsonArray {
     elements.forEach { element ->
-        add(element.toKxJsonElement())
+        add(element.toKotlinxJsonElement())
     }
 }
 
 /**
  * Converts [JSONPrimitive] to kotlinx-serialization [JsonPrimitive].
  */
-public fun JSONPrimitive.toKxJsonPrimitive(): JsonPrimitive = when (this) {
+public fun JSONPrimitive.toKotlinxJsonPrimitive(): JsonPrimitive = when (this) {
     is JSONNull -> JsonNull
 
     is JSONLiteral -> if (isString) {

@@ -19,6 +19,7 @@ public actual sealed interface TypeToken {
          * TypeToken.of(MyClass.class);
          * ```
          */
+        @JvmStatic
         public fun of(type: Type): JavaTypeToken = JavaTypeToken(type)
 
         /**
@@ -34,7 +35,7 @@ public actual sealed interface TypeToken {
          * ```
          */
         @JvmStatic
-        public fun of(capture: TypeCapture<*>): TypeToken {
+        public fun of(capture: TypeCapture<*>): JavaTypeToken {
             val superClass = capture.javaClass.genericSuperclass
             require(superClass is java.lang.reflect.ParameterizedType) {
                 "TypeCapture must be parameterized. Use: new TypeCapture<YourType>() {}"

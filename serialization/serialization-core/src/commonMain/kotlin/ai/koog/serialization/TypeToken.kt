@@ -22,9 +22,9 @@ public class KotlinTypeToken(
 /**
  * Creates a [KotlinTypeToken] from a Kotlin [KType].
  */
-public fun typeToken(type: KType): TypeToken = KotlinTypeToken(type)
+public fun typeToken(type: KType): KotlinTypeToken = KotlinTypeToken(type)
 
 /**
  * Creates a [KotlinTypeToken] from [T]
  */
-public inline fun <reified T> typeToken(): TypeToken = typeToken(typeOf<T>())
+public inline fun <reified T> typeToken(): KotlinTypeToken = typeToken(typeOf<T>())

@@ -13,7 +13,7 @@ import kotlinx.serialization.json.Json
 import kotlin.test.Test
 
 class KxJSONElementSerializationTest {
-    private val json = Json
+    private val serializer = KotlinxSerializer(Json)
 
     @Test
     fun testJSONNull() {
@@ -21,8 +21,8 @@ class KxJSONElementSerializationTest {
         //language=JSON
         val jsonString = "null"
 
-        json.encodeToString(element) shouldEqualJson jsonString
-        json.decodeFromString<JSONNull>(jsonString) shouldBe element
+        serializer.serializeJSONElement(element) shouldEqualJson jsonString
+        serializer.deserializeJSONElement(jsonString) shouldBe element
     }
 
     @Test
@@ -31,8 +31,8 @@ class KxJSONElementSerializationTest {
         //language=JSON
         val jsonString = "\"hello\""
 
-        json.encodeToString(element) shouldEqualJson jsonString
-        json.decodeFromString<JSONLiteral>(jsonString) shouldBe element
+        serializer.serializeJSONElement(element) shouldEqualJson jsonString
+        serializer.deserializeJSONElement(jsonString) shouldBe element
     }
 
     @Test
@@ -41,8 +41,8 @@ class KxJSONElementSerializationTest {
         //language=JSON
         val jsonString = "42"
 
-        json.encodeToString(element) shouldEqualJson jsonString
-        json.decodeFromString<JSONLiteral>(jsonString) shouldBe JSONLiteral("42", isString = false)
+        serializer.serializeJSONElement(element) shouldEqualJson jsonString
+        serializer.deserializeJSONElement(jsonString) shouldBe JSONLiteral("42", isString = false)
     }
 
     @Test
@@ -51,8 +51,8 @@ class KxJSONElementSerializationTest {
         //language=JSON
         val jsonString = "true"
 
-        json.encodeToString(element) shouldEqualJson jsonString
-        json.decodeFromString<JSONLiteral>(jsonString) shouldBe JSONLiteral("true", isString = false)
+        serializer.serializeJSONElement(element) shouldEqualJson jsonString
+        serializer.deserializeJSONElement(jsonString) shouldBe JSONLiteral("true", isString = false)
     }
 
     @Test
@@ -61,8 +61,8 @@ class KxJSONElementSerializationTest {
         //language=JSON
         val jsonString = "\"world\""
 
-        json.encodeToString(element) shouldEqualJson jsonString
-        json.decodeFromString<JSONPrimitive>(jsonString) shouldBe element
+        serializer.serializeJSONElement(element) shouldEqualJson jsonString
+        serializer.deserializeJSONElement(jsonString) shouldBe element
     }
 
     @Test
@@ -71,8 +71,8 @@ class KxJSONElementSerializationTest {
         //language=JSON
         val jsonString = "null"
 
-        json.encodeToString(element) shouldEqualJson jsonString
-        json.decodeFromString<JSONPrimitive>(jsonString) shouldBe element
+        serializer.serializeJSONElement(element) shouldEqualJson jsonString
+        serializer.deserializeJSONElement(jsonString) shouldBe element
     }
 
     @Test
@@ -81,8 +81,8 @@ class KxJSONElementSerializationTest {
         //language=JSON
         val jsonString = "[]"
 
-        json.encodeToString(element) shouldEqualJson jsonString
-        json.decodeFromString<JSONArray>(jsonString) shouldBe element
+        serializer.serializeJSONElement(element) shouldEqualJson jsonString
+        serializer.deserializeJSONElement(jsonString) shouldBe element
     }
 
     @Test
@@ -100,8 +100,8 @@ class KxJSONElementSerializationTest {
             [1, "test", true, null]
         """
 
-        json.encodeToString(element) shouldEqualJson jsonString
-        json.decodeFromString<JSONArray>(jsonString) shouldBe JSONArray(
+        serializer.serializeJSONElement(element) shouldEqualJson jsonString
+        serializer.deserializeJSONElement(jsonString) shouldBe JSONArray(
             listOf(
                 JSONLiteral("1", isString = false),
                 JSONLiteral("test", isString = true),
@@ -117,8 +117,8 @@ class KxJSONElementSerializationTest {
         //language=JSON
         val jsonString = "{}"
 
-        json.encodeToString(element) shouldEqualJson jsonString
-        json.decodeFromString<JSONObject>(jsonString) shouldBe element
+        serializer.serializeJSONElement(element) shouldEqualJson jsonString
+        serializer.deserializeJSONElement(jsonString) shouldBe element
     }
 
     @Test
@@ -141,8 +141,8 @@ class KxJSONElementSerializationTest {
             }
         """
 
-        json.encodeToString(element) shouldEqualJson jsonString
-        json.decodeFromString<JSONObject>(jsonString) shouldBe JSONObject(
+        serializer.serializeJSONElement(element) shouldEqualJson jsonString
+        serializer.deserializeJSONElement(jsonString) shouldBe JSONObject(
             mapOf(
                 "name" to JSONLiteral("John", isString = true),
                 "age" to JSONLiteral("30", isString = false),
@@ -190,8 +190,8 @@ class KxJSONElementSerializationTest {
             }
         """
 
-        json.encodeToString(element) shouldEqualJson jsonString
-        json.decodeFromString<JSONElement>(jsonString) shouldBe JSONObject(
+        serializer.serializeJSONElement(element) shouldEqualJson jsonString
+        serializer.deserializeJSONElement(jsonString) shouldBe JSONObject(
             mapOf(
                 "user" to JSONObject(
                     mapOf(
@@ -233,8 +233,8 @@ class KxJSONElementSerializationTest {
             ]
         """
 
-        json.encodeToString(element) shouldEqualJson jsonString
-        json.decodeFromString<JSONElement>(jsonString) shouldBe JSONArray(
+        serializer.serializeJSONElement(element) shouldEqualJson jsonString
+        serializer.deserializeJSONElement(jsonString) shouldBe JSONArray(
             listOf(
                 JSONObject(mapOf("id" to JSONLiteral("1", isString = false))),
                 JSONObject(mapOf("id" to JSONLiteral("2", isString = false))),
@@ -249,8 +249,8 @@ class KxJSONElementSerializationTest {
         //language=JSON
         val jsonString = "12345678901234567890"
 
-        json.encodeToString(element) shouldEqualJson jsonString
-        json.decodeFromString<JSONLiteral>(jsonString) shouldBe JSONLiteral("12345678901234567890", isString = false)
+        serializer.serializeJSONElement(element) shouldEqualJson jsonString
+        serializer.deserializeJSONElement(jsonString) shouldBe JSONLiteral("12345678901234567890", isString = false)
     }
 
     @Test
@@ -266,8 +266,8 @@ class KxJSONElementSerializationTest {
             )
         )
 
-        val serialized = json.encodeToString(original)
-        val deserialized = json.decodeFromString<JSONElement>(serialized)
+        val serialized = serializer.serializeJSONElement(original)
+        val deserialized = serializer.deserializeJSONElement(serialized)
 
         deserialized shouldBe original
     }

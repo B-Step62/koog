@@ -2,6 +2,7 @@
 
 package ai.koog.serialization
 
+import ai.koog.serialization.annotations.InternalKoogSerializationApi
 import java.lang.reflect.Type
 import kotlin.reflect.javaType
 
@@ -60,6 +61,7 @@ public class JavaTypeToken(
 /**
  * Converts this [TypeToken] to a [JavaTypeToken] exhaustively.
  */
+@InternalKoogSerializationApi
 @OptIn(ExperimentalStdlibApi::class)
 public fun TypeToken.asJavaType(): JavaTypeToken = when (this) {
     is JavaTypeToken -> this

@@ -1,11 +1,18 @@
-package ai.koog.serialization.json
+package ai.koog.serialization.kotlinx
 
+import ai.koog.serialization.JSONArray
+import ai.koog.serialization.JSONElement
+import ai.koog.serialization.JSONLiteral
+import ai.koog.serialization.JSONNull
+import ai.koog.serialization.JSONObject
+import ai.koog.serialization.JSONPrimitive
+import ai.koog.serialization.JSONUnquotedPrimitive
 import io.kotest.assertions.json.shouldEqualJson
 import io.kotest.matchers.shouldBe
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 
-class JSONElementSerializationTest {
+class KxJSONElementSerializationTest {
     private val json = Json
 
     @Test

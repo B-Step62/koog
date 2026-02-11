@@ -1,7 +1,13 @@
 @file:Suppress("ktlint:standard:function-naming", "FunctionName")
 
-package ai.koog.serialization.json
+package ai.koog.serialization
 
+import ai.koog.serialization.kotlinx.KxJSONArraySerializer
+import ai.koog.serialization.kotlinx.KxJSONElementSerializer
+import ai.koog.serialization.kotlinx.KxJSONLiteralSerializer
+import ai.koog.serialization.kotlinx.KxJSONNullSerializer
+import ai.koog.serialization.kotlinx.KxJSONObjectSerializer
+import ai.koog.serialization.kotlinx.KxJSONPrimitiveSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonUnquotedLiteral
 import kotlin.jvm.JvmStatic
@@ -12,7 +18,7 @@ import kotlin.jvm.JvmStatic
  * This sealed hierarchy provides a dynamic JSON model that can be constructed
  * and manipulated independently of any specific JSON serialization library.
  */
-@Serializable(with = JSONElementSerializer::class)
+@Serializable(with = KxJSONElementSerializer::class)
 public sealed interface JSONElement
 
 /**
@@ -20,7 +26,7 @@ public sealed interface JSONElement
  *
  * @property entries map of string keys to JSON elements
  */
-@Serializable(with = JSONObjectSerializer::class)
+@Serializable(with = KxJSONObjectSerializer::class)
 public data class JSONObject(
     val entries: Map<String, JSONElement>
 ) : JSONElement
@@ -30,7 +36,7 @@ public data class JSONObject(
  *
  * @property elements list of JSON elements
  */
-@Serializable(with = JSONArraySerializer::class)
+@Serializable(with = KxJSONArraySerializer::class)
 public data class JSONArray(
     val elements: List<JSONElement>
 ) : JSONElement
@@ -38,7 +44,7 @@ public data class JSONArray(
 /**
  * JSON primitive value (string, number, boolean, or null).
  */
-@Serializable(with = JSONPrimitiveSerializer::class)
+@Serializable(with = KxJSONPrimitiveSerializer::class)
 public sealed interface JSONPrimitive : JSONElement {
     /**
      * Raw string content of this primitive.
@@ -130,7 +136,7 @@ public sealed interface JSONPrimitive : JSONElement {
  * @property content raw string content of the literal
  * @property isString whether this represents a JSON string type
  */
-@Serializable(with = JSONLiteralSerializer::class)
+@Serializable(with = KxJSONLiteralSerializer::class)
 public data class JSONLiteral(
     override val content: String,
     override val isString: Boolean
@@ -139,7 +145,7 @@ public data class JSONLiteral(
 /**
  * JSON null value.
  */
-@Serializable(with = JSONNullSerializer::class)
+@Serializable(with = KxJSONNullSerializer::class)
 public data object JSONNull : JSONPrimitive {
     override val content: String = "null"
     override val isString: Boolean = false

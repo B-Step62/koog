@@ -39,4 +39,22 @@ public interface KoogSerializer {
      * @return deserialized value of type [T]
      */
     public fun <T> deserializeFromJSONElement(value: JSONElement, typeToken: TypeToken): T
+
+    /**
+     * Serializes a [JSONElement] to its JSON string representation.
+     *
+     * @param value [JSONElement] to serialize
+     * @return JSON string representation of the value
+     */
+    public fun serializeJSONElement(value: JSONElement): String =
+        serialize(value, typeToken = typeToken<JSONElement>())
+
+    /**
+     * Deserializes a JSON string to a [JSONElement].
+     *
+     * @param value JSON string to deserialize
+     * @return deserialized [JSONElement]
+     */
+    public fun deserializeJSONElement(value: String): JSONElement =
+        deserialize(value, typeToken = typeToken<JSONElement>())
 }

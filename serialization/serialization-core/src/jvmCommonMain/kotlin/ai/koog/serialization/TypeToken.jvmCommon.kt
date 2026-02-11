@@ -2,9 +2,7 @@
 
 package ai.koog.serialization
 
-import ai.koog.serialization.annotations.InternalKoogSerializationApi
 import java.lang.reflect.Type
-import kotlin.reflect.javaType
 
 @Suppress("MissingKDocForPublicAPI")
 public actual sealed interface TypeToken {
@@ -57,13 +55,3 @@ public abstract class TypeCapture<@Suppress("unused") T>
 public class JavaTypeToken(
     public val type: Type,
 ) : TypeToken
-
-/**
- * Converts this [TypeToken] to a [JavaTypeToken] exhaustively.
- */
-@InternalKoogSerializationApi
-@OptIn(ExperimentalStdlibApi::class)
-public fun TypeToken.asJavaType(): JavaTypeToken = when (this) {
-    is JavaTypeToken -> this
-    is KotlinTypeToken -> JavaTypeToken(this.type.javaType)
-}

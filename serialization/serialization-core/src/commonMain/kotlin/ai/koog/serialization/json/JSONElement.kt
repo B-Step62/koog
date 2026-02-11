@@ -12,7 +12,7 @@ import kotlin.jvm.JvmStatic
  * This sealed hierarchy provides a dynamic JSON model that can be constructed
  * and manipulated independently of any specific JSON serialization library.
  */
-@Serializable // TODO custom serializer
+@Serializable(with = JSONElementSerializer::class)
 public sealed interface JSONElement
 
 /**
@@ -20,7 +20,7 @@ public sealed interface JSONElement
  *
  * @property entries map of string keys to JSON elements
  */
-@Serializable // TODO custom serializer
+@Serializable(with = JSONObjectSerializer::class)
 public data class JSONObject(
     val entries: Map<String, JSONElement>
 ) : JSONElement
@@ -30,7 +30,7 @@ public data class JSONObject(
  *
  * @property elements list of JSON elements
  */
-@Serializable // TODO custom serializer
+@Serializable(with = JSONArraySerializer::class)
 public data class JSONArray(
     val elements: List<JSONElement>
 ) : JSONElement
@@ -38,7 +38,7 @@ public data class JSONArray(
 /**
  * JSON primitive value (string, number, boolean, or null).
  */
-@Serializable // TODO custom serializer
+@Serializable(with = JSONPrimitiveSerializer::class)
 public sealed interface JSONPrimitive : JSONElement {
     /**
      * Raw string content of this primitive.
@@ -130,7 +130,7 @@ public sealed interface JSONPrimitive : JSONElement {
  * @property content raw string content of the literal
  * @property isString whether this represents a JSON string type
  */
-@Serializable // TODO custom serializer
+@Serializable(with = JSONLiteralSerializer::class)
 public data class JSONLiteral(
     override val content: String,
     override val isString: Boolean
@@ -139,7 +139,7 @@ public data class JSONLiteral(
 /**
  * JSON null value.
  */
-@Serializable // TODO custom serializer
+@Serializable(with = JSONNullSerializer::class)
 public data object JSONNull : JSONPrimitive {
     override val content: String = "null"
     override val isString: Boolean = false

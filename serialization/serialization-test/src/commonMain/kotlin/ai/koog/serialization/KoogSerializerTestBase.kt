@@ -1,0 +1,109 @@
+package ai.koog.serialization
+
+import io.kotest.assertions.json.shouldEqualJson
+import io.kotest.matchers.shouldBe
+import kotlinx.serialization.Serializable
+
+/**
+ * Abstract test suite for [KoogSerializer] implementations.
+ * Provides common test scenarios that can be reused across different implementations.
+ */
+abstract class KoogSerializerTestBase {
+    @Serializable
+    data class TestPerson(
+        val name: String,
+        val age: Int,
+        val isActive: Boolean,
+        val email: String?,
+    )
+
+    @Serializable
+    data class TestCompany(
+        val name: String,
+        val employees: List<TestPerson>,
+        val founded: Int
+    )
+
+    abstract val serializer: KoogSerializer
+
+    open fun testSerializeDeserialize() {
+        val original = TestCompany(
+            name = "Tech Corp",
+            employees = listOf(
+                TestPerson("Alice", 30, true, "alice@techcorp.com"),
+                TestPerson("Bob", 25, false, null)
+            ),
+            founded = 2010
+        )
+
+        val serialized = serializer.serialize(original, typeToken<TestCompany>())
+
+        //language=JSON
+        serialized shouldEqualJson """
+            {
+              "name": "Tech Corp",
+              "employees": [
+                {
+                  "name": "Alice",
+                  "age": 30,
+                  "isActive": true,
+                  "email": "alice@techcorp.com"
+                },
+                {
+                  "name": "Bob",
+                  "age": 25,
+                  "isActive": false,
+                  "email": null
+                }
+              ],
+              "founded": 2010
+            }
+        """
+
+        val deserialized = serializer.deserialize<TestCompany>(serialized, typeToken<TestCompany>())
+        deserialized shouldBe original
+    }
+
+    open fun testSerializeDeserializeJSONElement() {
+        val original = TestCompany(
+            name = "Innovate Inc",
+            employees = listOf(
+                TestPerson("Charlie", 35, true, "charlie@innovate.com"),
+                TestPerson("Diana", 28, false, null)
+            ),
+            founded = 2015
+        )
+
+        val jsonElement = serializer.serializeToJSONElement(original, typeToken<TestCompany>())
+
+        jsonElement shouldBe JSONObject(
+            mapOf(
+                "name" to JSONLiteral("Innovate Inc", isString = true),
+                "employees" to JSONArray(
+                    listOf(
+                        JSONObject(
+                            mapOf(
+                                "name" to JSONLiteral("Charlie", isString = true),
+                                "age" to JSONLiteral("35", isString = false),
+                                "isActive" to JSONLiteral("true", isString = false),
+                                "email" to JSONLiteral("charlie@innovate.com", isString = true)
+                            )
+                        ),
+                        JSONObject(
+                            mapOf(
+                                "name" to JSONLiteral("Diana", isString = true),
+                                "age" to JSONLiteral("28", isString = false),
+                                "isActive" to JSONLiteral("false", isString = false),
+                                "email" to JSONNull
+                            )
+                        )
+                    )
+                ),
+                "founded" to JSONLiteral("2015", isString = false)
+            )
+        )
+
+        val deserialized = serializer.deserializeFromJSONElement<TestCompany>(jsonElement, typeToken<TestCompany>())
+        deserialized shouldBe original
+    }
+}

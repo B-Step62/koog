@@ -38,6 +38,7 @@ val excluded = setOf(
     ":http-client:http-client-java",
 
     ":serialization:serialization-test",
+    ":serialization:serialization-jackson",
 
     project.path, // the current project should not depend on itself
 )

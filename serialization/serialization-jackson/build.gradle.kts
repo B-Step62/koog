@@ -17,6 +17,12 @@ dependencies {
 
     testImplementation(kotlin("test-junit5"))
     testImplementation(project(":serialization:serialization-test"))
+    testImplementation(libs.kotest.assertions.core)
+    testImplementation(libs.kotest.assertions.json)
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 publishToMaven()

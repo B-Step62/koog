@@ -11,23 +11,25 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.NullNode
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.fasterxml.jackson.databind.node.ValueNode
+import com.fasterxml.jackson.databind.util.RawValue
 
 //region Jackson to Koog serialization
 
 /**
- * Converts Jackson [JsonNode] to [ai.koog.serialization.JSONElement].
+ * Converts Jackson [JsonNode] to [JSONElement].
  */
-public fun JsonNode.toJSONElement(): JSONElement = when {
-    isObject -> toJSONObject()
-    isArray -> toJSONArray()
-    else -> toJSONPrimitive()
+public fun JsonNode.toJSONElement(): JSONElement = when (this) {
+    is ObjectNode -> toJSONObject()
+    is ArrayNode -> toJSONArray()
+    is ValueNode -> toJSONPrimitive()
+    else -> throw IllegalArgumentException("Unsupported JsonNode type: ${this::class.simpleName}")
 }
 
 /**
- * Converts Jackson [ObjectNode] to [ai.koog.serialization.JSONObject].
+ * Converts Jackson [ObjectNode] to [JSONObject].
  */
-public fun JsonNode.toJSONObject(): JSONObject {
-    require(isObject) { "JsonNode is not an object" }
+public fun ObjectNode.toJSONObject(): JSONObject {
     return JSONObject(
         entries = this.fieldNames().asSequence().associateWith { fieldName ->
             this.get(fieldName).toJSONElement()
@@ -36,24 +38,21 @@ public fun JsonNode.toJSONObject(): JSONObject {
 }
 
 /**
- * Converts Jackson [ArrayNode] to [ai.koog.serialization.JSONArray].
+ * Converts Jackson [ArrayNode] to [JSONArray].
  */
-public fun JsonNode.toJSONArray(): JSONArray {
-    require(isArray) { "JsonNode is not an array" }
+public fun ArrayNode.toJSONArray(): JSONArray {
     return JSONArray(
         elements = map { it.toJSONElement() }
     )
 }
 
 /**
- * Converts Jackson primitive [JsonNode] to [ai.koog.serialization.JSONPrimitive].
+ * Converts Jackson primitive [JsonNode] to [JSONPrimitive].
  */
-public fun JsonNode.toJSONPrimitive(): JSONPrimitive = when {
+public fun ValueNode.toJSONPrimitive(): JSONPrimitive = when {
     isNull -> JSONNull
     isTextual -> JSONLiteral(asText(), isString = true)
-    isNumber -> JSONLiteral(asText(), isString = false)
-    isBoolean -> JSONLiteral(asText(), isString = false)
-    else -> error("Unsupported JsonNode type: ${this::class.simpleName}")
+    else -> JSONLiteral(asText(), isString = false)
 }
 
 //endregion
@@ -94,30 +93,18 @@ public fun JSONArray.toJacksonArrayNode(): ArrayNode {
 /**
  * Converts [JSONPrimitive] to Jackson [JsonNode].
  */
-public fun JSONPrimitive.toJacksonJsonNode(): JsonNode = when (this) {
+public fun JSONPrimitive.toJacksonJsonNode(): ValueNode = when (this) {
     is JSONNull -> NullNode.instance
 
     is JSONLiteral -> if (isString) {
         JsonNodeFactory.instance.textNode(content)
     } else {
-        // For unquoted literals (numbers, booleans), parse the content
-        when {
-            content == "true" -> JsonNodeFactory.instance.booleanNode(true)
-
-            content == "false" -> JsonNodeFactory.instance.booleanNode(false)
-
-            content.contains('.') -> JsonNodeFactory.instance.numberNode(content.toDouble())
-
-            else -> {
-                // Try to parse as Long first, then fallback to text node for very large numbers
-                val longValue = content.toLongOrNull()
-                if (longValue != null) {
-                    JsonNodeFactory.instance.numberNode(longValue)
-                } else {
-                    // For numbers too large for Long, use the POJONode or textNode to preserve precision
-                    JsonNodeFactory.instance.numberNode(content.toBigInteger())
-                }
-            }
+        JsonNodeFactory.instance.let { factory ->
+            intOrNull?.let { factory.numberNode(it) }
+                ?: longOrNull?.let { factory.numberNode(it) }
+                ?: doubleOrNull?.let { factory.numberNode(it) }
+                ?: booleanOrNull?.let { factory.booleanNode(it) }
+                ?: factory.rawValueNode(RawValue(content))
         }
     }
 }

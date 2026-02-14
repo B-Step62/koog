@@ -36,7 +36,7 @@ class JacksonSerializerTest {
             ),
             founded = 2010
         )
-        val serialized = serializer.serialize(original, typeToken<TestCompany>())
+        val serialized = serializer.serializeToString(original, typeToken<TestCompany>())
         //language=JSON
         serialized shouldEqualJson """
             {
@@ -58,7 +58,7 @@ class JacksonSerializerTest {
               "founded": 2010
             }
         """
-        val deserialized = serializer.deserialize<TestCompany>(serialized, typeToken<TestCompany>())
+        val deserialized = serializer.deserializeFromString<TestCompany>(serialized, typeToken<TestCompany>())
         deserialized shouldBe original
     }
 

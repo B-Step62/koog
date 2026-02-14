@@ -15,8 +15,8 @@ abstract class JSONElementSerializationTestBase {
         //language=JSON
         val jsonString = "null"
 
-        serializer.serializeJSONElement(element) shouldEqualJson jsonString
-        serializer.deserializeJSONElement(jsonString) shouldBe element
+        serializer.serializeJSONElementToString(element) shouldEqualJson jsonString
+        serializer.deserializeJSONElementFromString(jsonString) shouldBe element
     }
 
     open fun testJSONLiteralString() {
@@ -24,8 +24,8 @@ abstract class JSONElementSerializationTestBase {
         //language=JSON
         val jsonString = "\"hello\""
 
-        serializer.serializeJSONElement(element) shouldEqualJson jsonString
-        serializer.deserializeJSONElement(jsonString) shouldBe element
+        serializer.serializeJSONElementToString(element) shouldEqualJson jsonString
+        serializer.deserializeJSONElementFromString(jsonString) shouldBe element
     }
 
     open fun testJSONLiteralNumber() {
@@ -33,8 +33,8 @@ abstract class JSONElementSerializationTestBase {
         //language=JSON
         val jsonString = "42"
 
-        serializer.serializeJSONElement(element) shouldEqualJson jsonString
-        serializer.deserializeJSONElement(jsonString) shouldBe JSONLiteral("42", isString = false)
+        serializer.serializeJSONElementToString(element) shouldEqualJson jsonString
+        serializer.deserializeJSONElementFromString(jsonString) shouldBe JSONLiteral("42", isString = false)
     }
 
     open fun testJSONLiteralBoolean() {
@@ -42,8 +42,8 @@ abstract class JSONElementSerializationTestBase {
         //language=JSON
         val jsonString = "true"
 
-        serializer.serializeJSONElement(element) shouldEqualJson jsonString
-        serializer.deserializeJSONElement(jsonString) shouldBe JSONLiteral("true", isString = false)
+        serializer.serializeJSONElementToString(element) shouldEqualJson jsonString
+        serializer.deserializeJSONElementFromString(jsonString) shouldBe JSONLiteral("true", isString = false)
     }
 
     open fun testJSONPrimitiveString() {
@@ -51,8 +51,8 @@ abstract class JSONElementSerializationTestBase {
         //language=JSON
         val jsonString = "\"world\""
 
-        serializer.serializeJSONElement(element) shouldEqualJson jsonString
-        serializer.deserializeJSONElement(jsonString) shouldBe element
+        serializer.serializeJSONElementToString(element) shouldEqualJson jsonString
+        serializer.deserializeJSONElementFromString(jsonString) shouldBe element
     }
 
     open fun testJSONPrimitiveNull() {
@@ -60,8 +60,8 @@ abstract class JSONElementSerializationTestBase {
         //language=JSON
         val jsonString = "null"
 
-        serializer.serializeJSONElement(element) shouldEqualJson jsonString
-        serializer.deserializeJSONElement(jsonString) shouldBe element
+        serializer.serializeJSONElementToString(element) shouldEqualJson jsonString
+        serializer.deserializeJSONElementFromString(jsonString) shouldBe element
     }
 
     open fun testJSONArrayEmpty() {
@@ -69,8 +69,8 @@ abstract class JSONElementSerializationTestBase {
         //language=JSON
         val jsonString = "[]"
 
-        serializer.serializeJSONElement(element) shouldEqualJson jsonString
-        serializer.deserializeJSONElement(jsonString) shouldBe element
+        serializer.serializeJSONElementToString(element) shouldEqualJson jsonString
+        serializer.deserializeJSONElementFromString(jsonString) shouldBe element
     }
 
     open fun testJSONArrayWithPrimitives() {
@@ -87,8 +87,8 @@ abstract class JSONElementSerializationTestBase {
             [1, "test", true, null]
         """
 
-        serializer.serializeJSONElement(element) shouldEqualJson jsonString
-        serializer.deserializeJSONElement(jsonString) shouldBe JSONArray(
+        serializer.serializeJSONElementToString(element) shouldEqualJson jsonString
+        serializer.deserializeJSONElementFromString(jsonString) shouldBe JSONArray(
             listOf(
                 JSONLiteral("1", isString = false),
                 JSONLiteral("test", isString = true),
@@ -103,8 +103,8 @@ abstract class JSONElementSerializationTestBase {
         //language=JSON
         val jsonString = "{}"
 
-        serializer.serializeJSONElement(element) shouldEqualJson jsonString
-        serializer.deserializeJSONElement(jsonString) shouldBe element
+        serializer.serializeJSONElementToString(element) shouldEqualJson jsonString
+        serializer.deserializeJSONElementFromString(jsonString) shouldBe element
     }
 
     open fun testJSONObjectWithPrimitives() {
@@ -126,8 +126,8 @@ abstract class JSONElementSerializationTestBase {
             }
         """
 
-        serializer.serializeJSONElement(element) shouldEqualJson jsonString
-        serializer.deserializeJSONElement(jsonString) shouldBe JSONObject(
+        serializer.serializeJSONElementToString(element) shouldEqualJson jsonString
+        serializer.deserializeJSONElementFromString(jsonString) shouldBe JSONObject(
             mapOf(
                 "name" to JSONLiteral("John", isString = true),
                 "age" to JSONLiteral("30", isString = false),
@@ -174,8 +174,8 @@ abstract class JSONElementSerializationTestBase {
             }
         """
 
-        serializer.serializeJSONElement(element) shouldEqualJson jsonString
-        serializer.deserializeJSONElement(jsonString) shouldBe JSONObject(
+        serializer.serializeJSONElementToString(element) shouldEqualJson jsonString
+        serializer.deserializeJSONElementFromString(jsonString) shouldBe JSONObject(
             mapOf(
                 "user" to JSONObject(
                     mapOf(
@@ -216,8 +216,8 @@ abstract class JSONElementSerializationTestBase {
             ]
         """
 
-        serializer.serializeJSONElement(element) shouldEqualJson jsonString
-        serializer.deserializeJSONElement(jsonString) shouldBe JSONArray(
+        serializer.serializeJSONElementToString(element) shouldEqualJson jsonString
+        serializer.deserializeJSONElementFromString(jsonString) shouldBe JSONArray(
             listOf(
                 JSONObject(mapOf("id" to JSONLiteral("1", isString = false))),
                 JSONObject(mapOf("id" to JSONLiteral("2", isString = false))),
@@ -231,8 +231,8 @@ abstract class JSONElementSerializationTestBase {
         //language=JSON
         val jsonString = "12345678901234567890"
 
-        serializer.serializeJSONElement(element) shouldEqualJson jsonString
-        serializer.deserializeJSONElement(jsonString) shouldBe JSONLiteral("12345678901234567890", isString = false)
+        serializer.serializeJSONElementToString(element) shouldEqualJson jsonString
+        serializer.deserializeJSONElementFromString(jsonString) shouldBe JSONLiteral("12345678901234567890", isString = false)
     }
 
     open fun testRoundTripSerialization() {
@@ -247,8 +247,8 @@ abstract class JSONElementSerializationTestBase {
             )
         )
 
-        val serialized = serializer.serializeJSONElement(original)
-        val deserialized = serializer.deserializeJSONElement(serialized)
+        val serialized = serializer.serializeJSONElementToString(original)
+        val deserialized = serializer.deserializeJSONElementFromString(serialized)
 
         deserialized shouldBe original
     }

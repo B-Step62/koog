@@ -12,11 +12,11 @@ import kotlinx.serialization.json.Json
 public class KotlinxSerializer(
     public val json: Json,
 ) : KoogSerializer {
-    override fun <T> serialize(value: T, typeToken: TypeToken): String {
+    override fun <T> serializeToString(value: T, typeToken: TypeToken): String {
         return json.encodeToString(kotlinxSerializer(typeToken), value)
     }
 
-    override fun <T> deserialize(value: String, typeToken: TypeToken): T {
+    override fun <T> deserializeFromString(value: String, typeToken: TypeToken): T {
         return json.decodeFromString(kotlinxSerializer(typeToken), value)
     }
 

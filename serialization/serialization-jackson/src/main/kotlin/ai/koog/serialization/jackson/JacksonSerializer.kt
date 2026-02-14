@@ -27,11 +27,11 @@ public class JacksonSerializer(
         objectMapper.registerModule(JSONElementModule())
     }
 
-    override fun <T> serialize(value: T, typeToken: TypeToken): String {
+    override fun <T> serializeToString(value: T, typeToken: TypeToken): String {
         return objectMapper.writeValueAsString(value)
     }
 
-    override fun <T> deserialize(value: String, typeToken: TypeToken): T {
+    override fun <T> deserializeFromString(value: String, typeToken: TypeToken): T {
         val javaType = resolveJavaType(typeToken)
         val result: Any? = objectMapper.readValue(value, javaType)
 

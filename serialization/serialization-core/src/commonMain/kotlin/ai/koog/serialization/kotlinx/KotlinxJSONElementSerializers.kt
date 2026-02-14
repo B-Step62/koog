@@ -16,10 +16,7 @@ import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 
-/**
- * Serializer for [ai.koog.serialization.JSONElement] that delegates to kotlinx-serialization [JsonElement].
- */
-public object KotlinxJSONElementSerializer : KSerializer<JSONElement> {
+internal object JSONElementSerializer : KSerializer<JSONElement> {
     override val descriptor: SerialDescriptor = JsonElement.serializer().descriptor
 
     override fun serialize(encoder: Encoder, value: JSONElement) {
@@ -32,10 +29,7 @@ public object KotlinxJSONElementSerializer : KSerializer<JSONElement> {
     }
 }
 
-/**
- * Serializer for [ai.koog.serialization.JSONObject] that delegates to kotlinx-serialization [JsonObject].
- */
-public object KotlinxJSONObjectSerializer : KSerializer<JSONObject> {
+internal object JSONObjectSerializer : KSerializer<JSONObject> {
     override val descriptor: SerialDescriptor = JsonObject.serializer().descriptor
 
     override fun serialize(encoder: Encoder, value: JSONObject) {
@@ -48,10 +42,7 @@ public object KotlinxJSONObjectSerializer : KSerializer<JSONObject> {
     }
 }
 
-/**
- * Serializer for [ai.koog.serialization.JSONArray] that delegates to kotlinx-serialization [JsonArray].
- */
-public object KotlinxJSONArraySerializer : KSerializer<JSONArray> {
+internal object JSONArraySerializer : KSerializer<JSONArray> {
     override val descriptor: SerialDescriptor = JsonArray.serializer().descriptor
 
     override fun serialize(encoder: Encoder, value: JSONArray) {
@@ -64,10 +55,7 @@ public object KotlinxJSONArraySerializer : KSerializer<JSONArray> {
     }
 }
 
-/**
- * Serializer for [ai.koog.serialization.JSONPrimitive] that delegates to kotlinx-serialization [JsonPrimitive].
- */
-public object KotlinxJSONPrimitiveSerializer : KSerializer<JSONPrimitive> {
+internal object JSONPrimitiveSerializer : KSerializer<JSONPrimitive> {
     override val descriptor: SerialDescriptor = JsonPrimitive.serializer().descriptor
 
     override fun serialize(encoder: Encoder, value: JSONPrimitive) {
@@ -80,10 +68,7 @@ public object KotlinxJSONPrimitiveSerializer : KSerializer<JSONPrimitive> {
     }
 }
 
-/**
- * Serializer for [ai.koog.serialization.JSONLiteral] that delegates to kotlinx-serialization [JsonPrimitive].
- */
-public object KotlinxJSONLiteralSerializer : KSerializer<JSONLiteral> {
+internal object JSONLiteralSerializer : KSerializer<JSONLiteral> {
     override val descriptor: SerialDescriptor = JsonPrimitive.serializer().descriptor
 
     override fun serialize(encoder: Encoder, value: JSONLiteral) {
@@ -99,10 +84,7 @@ public object KotlinxJSONLiteralSerializer : KSerializer<JSONLiteral> {
     }
 }
 
-/**
- * Serializer for [JSONNull] that delegates to kotlinx-serialization [JsonNull].
- */
-public object KotlinxJSONNullSerializer : KSerializer<JSONNull> {
+internal object JSONNullSerializer : KSerializer<JSONNull> {
     override val descriptor: SerialDescriptor = JsonNull.serializer().descriptor
 
     override fun serialize(encoder: Encoder, value: JSONNull) {

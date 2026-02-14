@@ -2,6 +2,8 @@
 
 package ai.koog.serialization
 
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.KSerializer
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
@@ -17,6 +19,15 @@ public expect sealed interface TypeToken
  */
 public class KotlinTypeToken(
     public val type: KType,
+) : TypeToken
+
+/**
+ * Temporary used during migration from [kotlinx.serialization.KSerializer] to [TypeToken] in public APIs.
+ */
+// TODO finalize the migration and remove
+@InternalSerializationApi
+public class KSerializerTypeToken<T>(
+    public val serializer: KSerializer<T>
 ) : TypeToken
 
 /**

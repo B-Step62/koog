@@ -6,12 +6,11 @@ import kotlinx.serialization.Serializable
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
-import kotlin.test.assertTrue
 
 @OptIn(InternalAgentToolsApi::class)
 class LLMDescriptionUsageTest {
 
-    // 1) Class-level LLMDescription is applied to ToolDescriptor and all fields
+    // Class-level LLMDescription is applied to ToolDescriptor and all fields
     @Serializable
     @LLMDescription("MyData description")
     data class MyData(
@@ -33,7 +32,7 @@ class LLMDescriptionUsageTest {
         assertEquals("b", params[1].description)
     }
 
-    // 2) Property-level LLMDescription does NOT override parameter descriptions currently
+    // Property-level LLMDescription does NOT override parameter descriptions currently
     @Serializable
     @LLMDescription("Class description wins")
     data class PropertyAnnotated(
@@ -55,7 +54,7 @@ class LLMDescriptionUsageTest {
         )
     }
 
-    // 3) Type-use LLMDescription on property type is not used for parameter descriptions
+    // Type-use LLMDescription on property type is not used for parameter descriptions
     @Serializable
     @LLMDescription("TypeUse class desc")
     data class TypeUseAnnotated(
@@ -71,35 +70,7 @@ class LLMDescriptionUsageTest {
         assertEquals("age", params.getValue("age").description)
     }
 
-    // 4) Enum-level LLMDescription is used for value-wrapped ToolDescriptor description
-    @Serializable
-    @LLMDescription("Color enum description")
-    enum class DescribedColor { RED, GREEN }
-
-    @Test
-    fun enum_level_llm_description_applied_to_value_tool_descriptor() {
-        val desc = DescribedColor.serializer().descriptor.asToolDescriptor("color")
-        assertEquals("Color enum description", desc.description)
-        // Required single "value" parameter of Enum type
-        val param = desc.requiredParameters.single()
-        assertEquals(toolWrapperValueKey, param.name)
-        assertIs<ToolParameterType.Enum>(param.type)
-    }
-
-    // 5) Object-level LLMDescription is used for free-form ToolDescriptor description
-    @Serializable
-    @LLMDescription("Singleton object description")
-    object DescribedSingleton
-
-    @Test
-    fun object_level_llm_description_applied_to_free_form_descriptor() {
-        val desc = DescribedSingleton.serializer().descriptor.asToolDescriptor("singleton")
-        assertEquals("Singleton object description", desc.description)
-        assertTrue(desc.requiredParameters.isEmpty())
-        assertTrue(desc.optionalParameters.isEmpty())
-    }
-
-    // 6) Nested classes: parent and nested class descriptions; property-level ignored
+    // Nested classes: parent and nested class descriptions; property-level ignored
     @Serializable
     @LLMDescription("Parent desc")
     data class ParentWithNested(

@@ -114,13 +114,16 @@ class SafeToolTest {
         }
     }
 
-    private object StringEchoTool : Tool<String, String>(
-        argsSerializer = String.serializer(),
-        resultSerializer = String.serializer(),
+    private object EchoTool : Tool<EchoTool.Echo, EchoTool.Echo>(
+        argsSerializer = Echo.serializer(),
+        resultSerializer = Echo.serializer(),
         name = "string_echo",
         description = "String echo tool"
     ) {
-        override suspend fun execute(args: String): String = args
+        @Serializable
+        data class Echo(val value: String)
+
+        override suspend fun execute(args: Echo): Echo = args
     }
 
     @Test
@@ -162,12 +165,12 @@ class SafeToolTest {
     @Test
     fun testDecodeFailureReturnsFailure() {
         val badResult = buildJsonObject {
-            put("value", "not-a-string-result")
+            put("not-a-value", "not-a-string-result")
         }
 
         val toolResult = ReceivedToolResult(
             id = "1",
-            tool = StringEchoTool.name,
+            tool = EchoTool.name,
             toolArgs = JsonObject(emptyMap()),
             toolDescription = null,
             content = "Bad result",
@@ -175,7 +178,7 @@ class SafeToolTest {
             result = badResult
         )
 
-        val safeResult = toolResult.toSafeResult(StringEchoTool)
+        val safeResult = toolResult.toSafeResult(EchoTool)
         assertTrue(safeResult.isFailure())
     }
 

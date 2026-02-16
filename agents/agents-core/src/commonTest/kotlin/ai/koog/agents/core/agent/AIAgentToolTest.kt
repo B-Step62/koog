@@ -5,10 +5,12 @@ import ai.koog.agents.core.dsl.builder.forwardTo
 import ai.koog.agents.core.dsl.builder.strategy
 import ai.koog.agents.core.tools.ToolParameterType
 import ai.koog.agents.core.tools.annotations.InternalAgentToolsApi
+import ai.koog.agents.core.tools.annotations.LLMDescription
 import ai.koog.agents.testing.tools.getMockExecutor
 import ai.koog.prompt.dsl.prompt
 import ai.koog.prompt.llm.OllamaModels
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.Serializable
 import kotlin.reflect.typeOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -16,12 +18,19 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class AIAgentToolTest {
+    @Serializable
+    data class SimpleData(
+        @property:LLMDescription("Test request description")
+        val value: String
+    )
 
     private class MockAgent(
         private val run: () -> String
-    ) : GraphAIAgent<String, String>(
+    ) : GraphAIAgent<SimpleData, SimpleData>(
         id = "mock_agent_id",
-        strategy = strategy("mock") { edge(nodeStart forwardTo nodeFinish transformed { run() }) },
+        strategy = strategy("mock") {
+            edge(nodeStart forwardTo nodeFinish transformed { SimpleData(run()) })
+        },
         promptExecutor = getMockExecutor { },
         agentConfig = AIAgentConfig(
             prompt = prompt("test-prompt-id") {
@@ -48,10 +57,9 @@ class AIAgentToolTest {
         val tool = agent.asTool(
             agentName = "testAgent",
             agentDescription = "Test agent description",
-            inputDescription = "Test request description"
         )
 
-        val argsJson = tool.encodeArgs("Test input")
+        val argsJson = tool.encodeArgs(SimpleData("Test input"))
     }
 
     @OptIn(InternalAgentToolsApi::class)
@@ -60,7 +68,6 @@ class AIAgentToolTest {
         val tool = agent.asTool(
             agentName = "testAgent",
             agentDescription = "Test agent description",
-            inputDescription = "Test request description"
         )
 
         assertEquals("testAgent", tool.descriptor.name)
@@ -76,7 +83,6 @@ class AIAgentToolTest {
         val tool = agent.asTool(
             agentName = "testAgent",
             agentDescription = "Test agent description",
-            inputDescription = "Test request description"
         )
         assertEquals("testAgent", tool.descriptor.name)
     }
@@ -88,7 +94,7 @@ class AIAgentToolTest {
         val result = tool.execute(args)
 
         assertTrue(result.successful)
-        assertEquals(RESPONSE, result.result)
+        assertEquals(SimpleData(RESPONSE), result.result)
         assertNotNull(result.result)
         assertEquals(null, result.errorMessage)
     }
@@ -102,7 +108,6 @@ class AIAgentToolTest {
         val tool = agent.asTool(
             agentName = "testAgent",
             agentDescription = "Test agent description",
-            inputDescription = "Test request description"
         )
 
         val args = tool.decodeArgs(argsJson)
@@ -125,7 +130,6 @@ class AIAgentToolTest {
         val tool = agent.asTool(
             agentName = "testAgent",
             agentDescription = "Test agent description",
-            inputDescription = "Test request description"
         )
 
         val args = tool.decodeArgs(argsJson)
@@ -134,7 +138,7 @@ class AIAgentToolTest {
         assertEquals(
             AIAgentTool.AgentToolResult(
                 successful = true,
-                result = "This is the agent's response",
+                result = SimpleData("This is the agent's response"),
             ),
             result
         )

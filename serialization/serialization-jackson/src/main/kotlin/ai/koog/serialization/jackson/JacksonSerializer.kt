@@ -4,9 +4,11 @@ import ai.koog.serialization.JSONElement
 import ai.koog.serialization.JSONNull
 import ai.koog.serialization.JSONPrimitive
 import ai.koog.serialization.JavaTypeToken
+import ai.koog.serialization.KSerializerTypeToken
 import ai.koog.serialization.KoogSerializer
 import ai.koog.serialization.KotlinTypeToken
 import ai.koog.serialization.TypeToken
+import ai.koog.serialization.annotations.InternalKoogSerializationApi
 import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -15,8 +17,7 @@ import kotlin.reflect.jvm.javaType
 /**
  * Serializer that uses Jackson (jackson-databind).
  *
- * @param objectMapper the Jackson [ObjectMapper] to use for serialization/deserialization.
- *                     The module [JSONElementModule] will be automatically registered to properly handle [JSONElement] types.
+ * @param objectMapper The Jackson [ObjectMapper] to use for serialization/deserialization.
  */
 public class JacksonSerializer(
     public val objectMapper: ObjectMapper,
@@ -57,8 +58,10 @@ public class JacksonSerializer(
         return objectMapper.treeToValue(jsonNode, javaType.rawClass) as T
     }
 
+    @OptIn(InternalKoogSerializationApi::class)
     private fun resolveJavaType(typeToken: TypeToken): JavaType = when (typeToken) {
         is KotlinTypeToken -> objectMapper.typeFactory.constructType(typeToken.type.javaType)
         is JavaTypeToken -> objectMapper.typeFactory.constructType(typeToken.type)
+        is KSerializerTypeToken<*> -> throw IllegalArgumentException("KSerializerTypeToken is not supported for JacksonSerializer")
     }
 }

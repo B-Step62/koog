@@ -2,7 +2,7 @@
 
 package ai.koog.serialization
 
-import kotlinx.serialization.InternalSerializationApi
+import ai.koog.serialization.annotations.InternalKoogSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
@@ -25,7 +25,7 @@ public class KotlinTypeToken(
  * Temporary used during migration from [kotlinx.serialization.KSerializer] to [TypeToken] in public APIs.
  */
 // TODO finalize the migration and remove
-@InternalSerializationApi
+@InternalKoogSerializationApi
 public class KSerializerTypeToken<T>(
     public val serializer: KSerializer<T>
 ) : TypeToken

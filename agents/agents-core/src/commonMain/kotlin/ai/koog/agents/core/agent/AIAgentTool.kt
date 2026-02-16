@@ -18,9 +18,6 @@ import kotlin.coroutines.cancellation.CancellationException
  *
  * @param agentName Agent name that would be a tool name for this agent tool.
  * @param agentDescription Agent description that would be a tool description for this agent tool.
- * @param inputDescription An optional description of the agent's input. Required for primitive types only!
- *  * If not specified for a primitive input type (ex: String, Int, ...), an empty input description will be sent to LLM.
- *  * Does not have any effect for non-primitive [Input] type with @LLMDescription annotations.
  * @param inputSerializer Serializer to deserialize tool arguments to agent input.
  * @param outputSerializer Serializer to serialize agent output to tool result.
  * @param json Optional [Json] instance to customize de/serialization behavior.
@@ -37,7 +34,6 @@ import kotlin.coroutines.cancellation.CancellationException
 public inline fun <reified Input, reified Output> AIAgent<Input, Output>.asTool(
     agentName: String,
     agentDescription: String,
-    inputDescription: String? = null,
     inputSerializer: KSerializer<Input> = serializer(),
     outputSerializer: KSerializer<Output> = serializer(),
     json: Json = Json.Default,
@@ -51,7 +47,6 @@ public inline fun <reified Input, reified Output> AIAgent<Input, Output>.asTool(
     return service.createAgentTool(
         agentName = agentName,
         agentDescription = agentDescription,
-        inputDescription = inputDescription,
         inputSerializer = inputSerializer,
         outputSerializer = outputSerializer,
         parentAgentId = this.id
@@ -68,7 +63,6 @@ public inline fun <reified Input, reified Output> AIAgent<Input, Output>.asTool(
  * @property agentService The AI agent service to create the agent.
  * @property agentName A unique name for the agent.
  * @property agentDescription A brief description of the agent's functionality.
- * @property inputDescription An optional description of the agent's input. Required for primitive types only!
  * If not specified for a primitive input type (ex: String, Int, ...), an empty input description will be sent to LLM.
  * Does not have any effect for non-primitive [Input] type with @LLMDescription annotations.
  * @property inputSerializer A serializer for converting the input type to/from JSON.
@@ -79,14 +73,13 @@ public class AIAgentTool<Input, Output> @OptIn(InternalAgentToolsApi::class) con
     private val agentService: AIAgentService<Input, Output, *>,
     private val agentName: String,
     private val agentDescription: String,
-    private val inputDescription: String? = null,
     private val inputSerializer: KSerializer<Input>,
     private val outputSerializer: KSerializer<Output>,
     private val parentAgentId: String? = null
 ) : Tool<Input, AgentToolResult<Output>>(
     argsSerializer = inputSerializer,
     resultSerializer = AgentToolResult.serializer(outputSerializer),
-    descriptor = inputSerializer.descriptor.asToolDescriptor(agentName, agentDescription, inputDescription)
+    descriptor = inputSerializer.descriptor.asToolDescriptor(agentName, agentDescription)
 ) {
     @OptIn(ExperimentalAtomicApi::class)
     private val toolCallNumber: AtomicInt = AtomicInt(0)

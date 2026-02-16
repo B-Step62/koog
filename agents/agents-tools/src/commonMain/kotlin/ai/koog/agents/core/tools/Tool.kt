@@ -31,12 +31,6 @@ public abstract class Tool<TArgs, TResult>(
     public val name: String get() = descriptor.name
 
     /**
-     * Wraps [argsSerializer] to handle primitive types, ensuring all tool arguments serialize to [JsonObject] as required by LLM APIs.
-     */
-    @OptIn(InternalAgentToolsApi::class)
-    private val actualArgsSerializer: KSerializer<TArgs> = argsSerializer.asToolDescriptorSerializer()
-
-    /**
      * The [Json] used to encode and decode the arguments and results of the tool.
      */
     @OptIn(InternalAgentToolsApi::class)
@@ -102,7 +96,7 @@ public abstract class Tool<TArgs, TResult>(
      * @param rawArgs the raw JSON object that contains the encoded arguments
      * @return the decoded arguments of type TArgs
      */
-    public fun decodeArgs(rawArgs: JsonObject): TArgs = json.decodeFromJsonElement(actualArgsSerializer, rawArgs)
+    public fun decodeArgs(rawArgs: JsonObject): TArgs = json.decodeFromJsonElement(argsSerializer, rawArgs)
 
     /**
      * Decodes the provided raw JSON element into an instance of the specified result type.
@@ -119,7 +113,7 @@ public abstract class Tool<TArgs, TResult>(
      * @param args The arguments to be encoded.
      * @return A JsonObject representing the encoded arguments.
      */
-    public fun encodeArgs(args: TArgs): JsonObject = json.encodeToJsonElement(actualArgsSerializer, args).jsonObject
+    public fun encodeArgs(args: TArgs): JsonObject = json.encodeToJsonElement(argsSerializer, args).jsonObject
 
     /**
      * Encodes the given arguments into a JSON representation without type safety checks.
@@ -137,7 +131,7 @@ public abstract class Tool<TArgs, TResult>(
         return withUnsafeCast<TArgs, JsonObject>(
             args,
             "encodeArgsUnsafe argument must be castable to TArgs"
-        ) { json.encodeToJsonElement(actualArgsSerializer, it).jsonObject }
+        ) { json.encodeToJsonElement(argsSerializer, it).jsonObject }
     }
 
     /**
@@ -172,7 +166,7 @@ public abstract class Tool<TArgs, TResult>(
      * @param args the arguments to be encoded into a JSON string
      * @return the JSON string representation of the provided arguments
      */
-    public fun encodeArgsToString(args: TArgs): String = json.encodeToString(actualArgsSerializer, args)
+    public fun encodeArgsToString(args: TArgs): String = json.encodeToString(argsSerializer, args)
 
     /**
      * Encodes the provided arguments into a JSON string representation without type safety checks.

@@ -5,7 +5,6 @@ import ai.koog.agents.core.tools.annotations.InternalAgentToolsApi
 import ai.koog.agents.core.tools.annotations.LLMDescription
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.addJsonArray
@@ -14,7 +13,6 @@ import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonArray
 import kotlinx.serialization.json.putJsonObject
-import kotlin.jvm.JvmInline
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -23,47 +21,6 @@ import kotlin.test.assertTrue
 // Complex tool params = objects, lists of enums, nested lists.
 @OptIn(InternalAgentToolsApi::class)
 class ToolParameterTypesTest {
-
-    @Test
-    fun testPrimitiveTypesParameter() = runTest {
-        val args = "Hello"
-        val encodedArgs = PrimitiveTypesTool.encodeArgs(args)
-
-        // Test decoding and encoding for primitive types
-        assertEquals(
-            expected = buildJsonObject { put("__wrapped_value__", args) },
-            actual = encodedArgs,
-        )
-        assertEquals(
-            expected = args,
-            actual = PrimitiveTypesTool.decodeArgs(encodedArgs),
-        )
-
-        val result = PrimitiveTypesTool.execute(args)
-        val encodedResult = PrimitiveTypesTool.encodeResultToString(result)
-        assertEquals("\"$result\"", encodedResult)
-    }
-
-    @Test
-    fun testValueClassParameter() = runTest {
-        val args = ValueClassTool.Args("Hello")
-        val encodedArgs = ValueClassTool.encodeArgs(args)
-
-        // Test decoding and encoding for value classes types
-        assertEquals(
-            expected = buildJsonObject { put("__wrapped_value__", args.value) },
-            actual = encodedArgs,
-        )
-        assertEquals(
-            expected = args,
-            actual = ValueClassTool.decodeArgs(encodedArgs),
-        )
-
-        val result = ValueClassTool.execute(args)
-        val encodedResult = ValueClassTool.encodeResultToString(result)
-        assertEquals("\"$result\"", encodedResult)
-    }
-
     // Region: Object tool parameter cases
     @Test
     fun testObjectParameter() = runTest {
@@ -464,30 +421,6 @@ class ToolParameterTypesTest {
         }
     }
     // endregion
-
-    private object PrimitiveTypesTool : Tool<String, String>(
-        argsSerializer = String.serializer(),
-        resultSerializer = String.serializer(),
-        name = "primitive_types_tool",
-        description = "Tool with primitive types parameter",
-    ) {
-        override suspend fun execute(args: String): String =
-            "input: $args"
-    }
-
-    private object ValueClassTool : Tool<ValueClassTool.Args, String>(
-        argsSerializer = Args.serializer(),
-        resultSerializer = String.serializer(),
-        name = "value_class_tool",
-        description = "Tool with value class parameter",
-    ) {
-        @Serializable
-        @JvmInline
-        value class Args(val value: String)
-
-        override suspend fun execute(args: Args): String =
-            "input: ${args.value}"
-    }
 
     private object NestedListsTool : Tool<NestedListsTool.Args, NestedListsTool.Result>(
         argsSerializer = Args.serializer(),

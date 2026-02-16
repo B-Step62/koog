@@ -441,9 +441,6 @@ public operator fun AIAgentService.Companion.invoke(
  *
  * @param agentName Agent name that would be a tool name for this agent tool.
  * @param agentDescription Agent description that would be a tool description for this agent tool.
- * @param inputDescription An optional description of the agent's input. Required for primitive types only!
- *  * If not specified for a primitive input type (ex: String, Int, ...), an empty input description will be sent to LLM.
- *  * Does not have any effect for non-primitive [Input] type with @LLMDescription annotations.
  * @param inputSerializer Serializer to deserialize tool arguments to agent input.
  * @param outputSerializer Serializer to serialize agent output to a tool result.
  * @return A special tool that wraps the agent functionality.
@@ -464,7 +461,6 @@ public inline fun <reified Input, reified Output> AIAgentService<Input, Output, 
     agentService = this,
     agentName = agentName,
     agentDescription = agentDescription,
-    inputDescription = inputDescription,
     inputSerializer = inputSerializer,
     outputSerializer = outputSerializer,
     parentAgentId = parentAgentId

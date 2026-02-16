@@ -295,12 +295,17 @@ class FunctionalAIAgentTest {
 
     // Define sample tools for subtasks, similar in spirit to QATools so tool lists are not empty
     object ArchitectureTools {
-        object AnalyzeRequirements : SimpleTool<String>(
-            argsSerializer = String.serializer(),
+        object AnalyzeRequirements : SimpleTool<AnalyzeRequirements.Requirements>(
+            argsSerializer = Requirements.serializer(),
             name = "analyze_requirements",
             description = "Analyzes high-level mission requirements."
         ) {
-            override suspend fun execute(args: String): String = "Requirements analyzed: $args"
+            @Serializable
+            data class Requirements(
+                val value: String,
+            )
+
+            override suspend fun execute(args: Requirements): String = "Requirements analyzed: ${args.value}"
         }
 
         object DraftArchitecture : SimpleTool<Architecture>(

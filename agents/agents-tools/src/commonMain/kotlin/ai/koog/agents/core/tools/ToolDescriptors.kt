@@ -74,6 +74,8 @@ public sealed class ToolParameterType(public val name: kotlin.String) {
      *
      * @property types The type definition for the items within the array.
      */
+    // FIXME ToolParameterDescriptor.name in types array is actually always ignored when the schema is constructed.
+    //  Should we use a dedicated type here instead?
     public data class AnyOf(val types: Array<ToolParameterDescriptor>) : ToolParameterType("ANYOF") {
         override fun equals(other: Any?): kotlin.Boolean = other is AnyOf && this.types.contentEquals(other.types)
         override fun hashCode(): Int = types.contentHashCode()

@@ -42,55 +42,91 @@ For all available installation methods, see [Install Koog](getting-started.md#in
 
 To create an agent, create an instance of the `AIAgent` class and provide the `promptExecutor` and `llmModel` parameters:
 
-<!--- INCLUDE
-import ai.koog.agents.core.agent.AIAgent
-import ai.koog.prompt.executor.clients.openai.OpenAIModels
-import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
--->
-```kotlin
-val agent = AIAgent(
-    promptExecutor = simpleOpenAIExecutor(System.getenv("OPENAI_API_KEY")),
-    llmModel = OpenAIModels.Chat.GPT4o
-)
-```
-<!--- KNIT example-basic-01.kt -->
+=== "Kotlin"
+
+    <!--- INCLUDE
+    import ai.koog.agents.core.agent.AIAgent
+    import ai.koog.prompt.executor.clients.openai.OpenAIModels
+    import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
+    -->
+    ```kotlin
+    val agent = AIAgent(
+        promptExecutor = simpleOpenAIExecutor(System.getenv("OPENAI_API_KEY")),
+        llmModel = OpenAIModels.Chat.GPT4o
+    )
+    ```
+    <!--- KNIT example-basic-01.kt -->
+
+=== "Java"
+    
+    ```java
+    AIAgent<String, String> agent = AIAgent.builder()
+        .promptExecutor(simpleOpenAIExecutor(System.getenv("OPENAI_API_KEY")))
+        .llmModel(OpenAIModels.Chat.GPT4o)
+        .build();
+    ```
 
 ### 3. Add a system prompt
 
 A system prompt is used to define agent behavior. To provide the prompt, use the `systemPrompt` parameter:
 
-<!--- INCLUDE
-import ai.koog.agents.core.agent.AIAgent
-import ai.koog.prompt.executor.clients.openai.OpenAIModels
-import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
--->
-```kotlin
-val agent = AIAgent(
-    promptExecutor = simpleOpenAIExecutor(System.getenv("YOUR_API_KEY")),
-    systemPrompt = "You are a helpful assistant. Answer user questions concisely.",
-    llmModel = OpenAIModels.Chat.GPT4o
-)
-```
-<!--- KNIT example-basic-02.kt -->
+=== "Kotlin"
+
+    <!--- INCLUDE
+    import ai.koog.agents.core.agent.AIAgent
+    import ai.koog.prompt.executor.clients.openai.OpenAIModels
+    import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
+    -->
+    ```kotlin
+    val agent = AIAgent(
+        promptExecutor = simpleOpenAIExecutor(System.getenv("YOUR_API_KEY")),
+        systemPrompt = "You are a helpful assistant. Answer user questions concisely.",
+        llmModel = OpenAIModels.Chat.GPT4o
+    )
+    ```
+    <!--- KNIT example-basic-02.kt -->
+
+=== "Java"
+
+    ```java
+    AIAgent<String, String> agent = AIAgent.builder()
+        .promptExecutor(simpleOpenAIExecutor(System.getenv("OPENAI_API_KEY")))
+        .systemPrompt("You are a helpful assistant. Answer user questions concisely.")
+        .llmModel(OpenAIModels.Chat.GPT4o)
+        .build();
+    ```
 
 ### 4. Configure LLM output
 
 Provide a temperature of LLM output generation using the `temperature` parameter:
 
-<!--- INCLUDE
-import ai.koog.agents.core.agent.AIAgent
-import ai.koog.prompt.executor.clients.openai.OpenAIModels
-import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
--->
-```kotlin
-val agent = AIAgent(
-    promptExecutor = simpleOpenAIExecutor(System.getenv("YOUR_API_KEY")),
-    systemPrompt = "You are a helpful assistant. Answer user questions concisely.",
-    llmModel = OpenAIModels.Chat.GPT4o,
-    temperature = 0.7
-)
-```
-<!--- KNIT example-basic-03.kt -->
+=== "Kotlin"
+
+    <!--- INCLUDE
+    import ai.koog.agents.core.agent.AIAgent
+    import ai.koog.prompt.executor.clients.openai.OpenAIModels
+    import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
+    -->
+    ```kotlin
+    val agent = AIAgent(
+        promptExecutor = simpleOpenAIExecutor(System.getenv("YOUR_API_KEY")),
+        systemPrompt = "You are a helpful assistant. Answer user questions concisely.",
+        llmModel = OpenAIModels.Chat.GPT4o,
+        temperature = 0.7
+    )
+    ```
+    <!--- KNIT example-basic-03.kt -->
+
+=== "Java"
+
+    ```java
+    AIAgent<String, String> agent = AIAgent.builder()
+        ..promptExecutor(simpleOpenAIExecutor(System.getenv("OPENAI_API_KEY")))
+        .systemPrompt("You are a helpful assistant. Answer user questions concisely.")
+        .llmModel(OpenAIModels.Chat.GPT4o)
+        .temperature(0.7)
+        .build();
+    ```
 
 ### 5. Add tools
 
@@ -99,51 +135,88 @@ You can use the built-in tools or implement your own custom tools if needed.
 
 To configure tools, use the `toolRegistry` parameter that defines the tools available to the agent:
 
-<!--- INCLUDE
-import ai.koog.agents.core.agent.AIAgent
-import ai.koog.agents.core.tools.ToolRegistry
-import ai.koog.agents.ext.tool.SayToUser
-import ai.koog.prompt.executor.clients.openai.OpenAIModels
-import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
--->
-```kotlin
-val agent = AIAgent(
-    promptExecutor = simpleOpenAIExecutor(System.getenv("YOUR_API_KEY")),
-    systemPrompt = "You are a helpful assistant. Answer user questions concisely.",
-    llmModel = OpenAIModels.Chat.GPT4o,
-    temperature = 0.7,
-    toolRegistry = ToolRegistry {
-        tool(SayToUser)
-    }
-)
-```
-<!--- KNIT example-basic-04.kt -->
+=== "Kotlin"
+
+    <!--- INCLUDE
+    import ai.koog.agents.core.agent.AIAgent
+    import ai.koog.agents.core.tools.ToolRegistry
+    import ai.koog.agents.ext.tool.SayToUser
+    import ai.koog.prompt.executor.clients.openai.OpenAIModels
+    import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
+    -->
+    ```kotlin
+    val agent = AIAgent(
+        promptExecutor = simpleOpenAIExecutor(System.getenv("YOUR_API_KEY")),
+        systemPrompt = "You are a helpful assistant. Answer user questions concisely.",
+        llmModel = OpenAIModels.Chat.GPT4o,
+        temperature = 0.7,
+        toolRegistry = ToolRegistry {
+            tool(SayToUser)
+        }
+    )
+    ```
+    <!--- KNIT example-basic-04.kt -->
+
+=== "Java"
+
+    ```java
+    AIAgent<String, String> agent = AIAgent.builder()
+        .promptExecutor(simpleOpenAIExecutor(System.getenv("OPENAI_API_KEY")))
+        .systemPrompt("You are a helpful assistant. Answer user questions concisely.")
+        .llmModel(OpenAIModels.Chat.GPT4o)
+        .temperature(0.7)
+        .toolRegistry(
+            ToolRegistry.builder()
+                .tool(SayToUser.INSTANCE)
+                .build()
+        )
+        .build();
+    ```
 In the example, `SayToUser` is the built-in tool. To learn how to create a custom tool, see [Tools](tools-overview.md).
 
 ### 6. Adjust agent iterations
 
 Provide the maximum number of steps the agent can take before it is forced to stop using the `maxIterations` parameter:
 
-<!--- INCLUDE
-import ai.koog.agents.core.agent.AIAgent
-import ai.koog.agents.core.tools.ToolRegistry
-import ai.koog.agents.ext.tool.SayToUser
-import ai.koog.prompt.executor.clients.openai.OpenAIModels
-import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
--->
-```kotlin
-val agent = AIAgent(
-    promptExecutor = simpleOpenAIExecutor(System.getenv("YOUR_API_KEY")),
-    systemPrompt = "You are a helpful assistant. Answer user questions concisely.",
-    llmModel = OpenAIModels.Chat.GPT4o,
-    temperature = 0.7,
-    toolRegistry = ToolRegistry {
-        tool(SayToUser)
-    },
-    maxIterations = 30
-)
-```
-<!--- KNIT example-basic-05.kt -->
+=== "Kotlin"
+
+    <!--- INCLUDE
+    import ai.koog.agents.core.agent.AIAgent
+    import ai.koog.agents.core.tools.ToolRegistry
+    import ai.koog.agents.ext.tool.SayToUser
+    import ai.koog.prompt.executor.clients.openai.OpenAIModels
+    import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
+    -->
+    ```kotlin
+    val agent = AIAgent(
+        promptExecutor = simpleOpenAIExecutor(System.getenv("YOUR_API_KEY")),
+        systemPrompt = "You are a helpful assistant. Answer user questions concisely.",
+        llmModel = OpenAIModels.Chat.GPT4o,
+        temperature = 0.7,
+        toolRegistry = ToolRegistry {
+            tool(SayToUser)
+        },
+        maxIterations = 30
+    )
+    ```
+    <!--- KNIT example-basic-05.kt -->
+
+=== "Java"
+
+    ```java
+    AIAgent<String, String> agent = AIAgent.builder()
+        .promptExecutor(simpleOpenAIExecutor(System.getenv("OPENAI_API_KEY")))
+        .systemPrompt("You are a helpful assistant. Answer user questions concisely.")
+        .llmModel(OpenAIModels.Chat.GPT4o)
+        .temperature(0.7)
+        .toolRegistry(
+            ToolRegistry.builder()
+                .tool(SayToUser.INSTANCE)
+                .build()
+        )
+        .maxIterations(100)
+        .build();
+    ```
 
 ### 7. Handle events during agent runtime
 
@@ -156,31 +229,52 @@ For more information on how to use the `EventHandler` feature for monitoring you
 
 To run the agent, use the `run()` function:
 
-<!--- INCLUDE
-import ai.koog.agents.core.agent.AIAgent
-import ai.koog.agents.core.tools.ToolRegistry
-import ai.koog.agents.ext.tool.SayToUser
-import ai.koog.prompt.executor.clients.openai.OpenAIModels
-import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
-import kotlinx.coroutines.runBlocking
--->
-```kotlin
-val agent = AIAgent(
-    promptExecutor = simpleOpenAIExecutor(System.getenv("OPENAI_API_KEY")),
-    systemPrompt = "You are a helpful assistant. Answer user questions concisely.",
-    llmModel = OpenAIModels.Chat.GPT4o,
-    temperature = 0.7,
-    toolRegistry = ToolRegistry {
-        tool(SayToUser)
-    },
-    maxIterations = 100
-)
+=== "Kotlin"
 
-fun main() = runBlocking {
-    val result = agent.run("Hello! How can you help me?")
-}
-```
-<!--- KNIT example-basic-06.kt -->
+    <!--- INCLUDE
+    import ai.koog.agents.core.agent.AIAgent
+    import ai.koog.agents.core.tools.ToolRegistry
+    import ai.koog.agents.ext.tool.SayToUser
+    import ai.koog.prompt.executor.clients.openai.OpenAIModels
+    import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
+    import kotlinx.coroutines.runBlocking
+    -->
+    ```kotlin
+    val agent = AIAgent(
+        promptExecutor = simpleOpenAIExecutor(System.getenv("OPENAI_API_KEY")),
+        systemPrompt = "You are a helpful assistant. Answer user questions concisely.",
+        llmModel = OpenAIModels.Chat.GPT4o,
+        temperature = 0.7,
+        toolRegistry = ToolRegistry {
+            tool(SayToUser)
+        },
+        maxIterations = 100
+    )
+    
+    fun main() = runBlocking {
+        val result = agent.run("Hello! How can you help me?")
+    }
+    ```
+    <!--- KNIT example-basic-06.kt -->
+
+=== "Java"
+
+    ```java
+    AIAgent<String, String> agent = AIAgent.builder()
+        .promptExecutor(simpleOpenAIExecutor(System.getenv("OPENAI_API_KEY")))
+        .systemPrompt("You are a helpful assistant. Answer user questions concisely.")
+        .llmModel(OpenAIModels.Chat.GPT4o)
+        .temperature(0.7)
+        .toolRegistry(
+            ToolRegistry.builder()
+                .tool(SayToUser.INSTANCE)
+                .build()
+        )
+        .maxIterations(100)
+        .build();
+
+    String result = agent.run("Hello! How can you help me?");
+    ```
 
 The agent produces the following output:
 

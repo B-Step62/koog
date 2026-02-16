@@ -217,31 +217,43 @@ To use Koog, you need to include all necessary dependencies in your build config
 
     The example below creates and runs a simple AI agent using the [`GPT-4o`](https://platform.openai.com/docs/models/gpt-4o) model.
 
-    <!--- CLEAR -->
-    <!--- INCLUDE
-    import ai.koog.agents.core.agent.AIAgent
-    import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
-    import ai.koog.prompt.executor.clients.openai.OpenAIModels
-    import kotlinx.coroutines.runBlocking
-    -->
-    ```kotlin
-    fun main() = runBlocking {
-        // Get an API key from the OPENAI_API_KEY environment variable
-        val apiKey = System.getenv("OPENAI_API_KEY")
-            ?: error("The API key is not set.")
+    === "Kotlin"
+
+        <!--- INCLUDE
+        import ai.koog.agents.core.agent.AIAgent
+        import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
+        import ai.koog.prompt.executor.clients.openai.OpenAIModels
+        import kotlinx.coroutines.runBlocking
+        -->
+        ```kotlin
+        fun main() = runBlocking {
+            // Get an API key from the OPENAI_API_KEY environment variable
+            val apiKey = System.getenv("OPENAI_API_KEY")
+                ?: error("The API key is not set.")
+            
+            // Create an agent
+            val agent = AIAgent(
+                promptExecutor = simpleOpenAIExecutor(apiKey),
+                llmModel = OpenAIModels.Chat.GPT4o
+            )
         
-        // Create an agent
-        val agent = AIAgent(
-            promptExecutor = simpleOpenAIExecutor(apiKey),
-            llmModel = OpenAIModels.Chat.GPT4o
-        )
-    
-        // Run the agent
-        val result = agent.run("Hello! How can you help me?")
-        println(result)
-    }
-    ```
-    <!--- KNIT example-getting-started-01.kt -->
+            // Run the agent
+            val result = agent.run("Hello! How can you help me?")
+            println(result)
+        }
+        ```
+        <!--- KNIT example-getting-started-01.kt -->
+
+    === "Java"
+
+        ```java
+        AIAgent<String, String> agent = AIAgent.builder()
+            .promptExecutor(simpleOpenAIExecutor(System.getenv("OPENAI_API_KEY")))
+            .llmModel(OpenAIModels.Chat.GPT4o)
+            .build();
+
+        System.out.println(agent.run("Hello! How can you help me?"));
+        ```
 
     The example can produce the following output:
     
@@ -264,30 +276,43 @@ To use Koog, you need to include all necessary dependencies in your build config
 
     The example below creates and runs a simple AI agent using the [`Claude Opus 4.1`](https://www.anthropic.com/news/claude-opus-4-1) model.
 
-    <!--- INCLUDE
-    import ai.koog.agents.core.agent.AIAgent
-    import ai.koog.prompt.executor.llms.all.simpleAnthropicExecutor
-    import ai.koog.prompt.executor.clients.anthropic.AnthropicModels
-    import kotlinx.coroutines.runBlocking
-    -->
-    ```kotlin
-    fun main() = runBlocking {
-        // Get an API key from the ANTHROPIC_API_KEY environment variable
-        val apiKey = System.getenv("ANTHROPIC_API_KEY")
-            ?: error("The API key is not set.")
+    === "Kotlin"
+
+        <!--- INCLUDE
+        import ai.koog.agents.core.agent.AIAgent
+        import ai.koog.prompt.executor.llms.all.simpleAnthropicExecutor
+        import ai.koog.prompt.executor.clients.anthropic.AnthropicModels
+        import kotlinx.coroutines.runBlocking
+        -->
+        ```kotlin
+        fun main() = runBlocking {
+            // Get an API key from the ANTHROPIC_API_KEY environment variable
+            val apiKey = System.getenv("ANTHROPIC_API_KEY")
+                ?: error("The API key is not set.")
+            
+            // Create an agent
+            val agent = AIAgent(
+                promptExecutor = simpleAnthropicExecutor(apiKey),
+                llmModel = AnthropicModels.Opus_4_1
+            )
         
-        // Create an agent
-        val agent = AIAgent(
-            promptExecutor = simpleAnthropicExecutor(apiKey),
-            llmModel = AnthropicModels.Opus_4_1
-        )
-    
-        // Run the agent
-        val result = agent.run("Hello! How can you help me?")
-        println(result)
-    }
-    ```
-    <!--- KNIT example-getting-started-02.kt -->
+            // Run the agent
+            val result = agent.run("Hello! How can you help me?")
+            println(result)
+        }
+        ```
+        <!--- KNIT example-getting-started-02.kt -->
+
+    === "Java"
+
+        ```java
+        AIAgent<String, String> agent = AIAgent.builder()
+            .promptExecutor(simpleAnthropicExecutor(System.getenv("ANTHROPIC_API_KEY")))
+            .llmModel(AnthropicModels.Opus_4_1)
+            .build();
+
+        System.out.println(agent.run("Hello! How can you help me?"));
+        ```
 
     The example can produce the following output:
 
@@ -308,30 +333,43 @@ To use Koog, you need to include all necessary dependencies in your build config
 
     The example below creates and runs a simple AI agent using the [`Gemini 2.5 Pro`](https://cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/2-5-pro) model.
 
-    <!--- INCLUDE
-    import ai.koog.agents.core.agent.AIAgent
-    import ai.koog.prompt.executor.llms.all.simpleGoogleAIExecutor
-    import ai.koog.prompt.executor.clients.google.GoogleModels
-    import kotlinx.coroutines.runBlocking
-    -->
-    ```kotlin
-    fun main() = runBlocking {
-        // Get an API key from the GOOGLE_API_KEY environment variable
-        val apiKey = System.getenv("GOOGLE_API_KEY")
-            ?: error("The API key is not set.")
+    === "Kotlin"
+
+        <!--- INCLUDE
+        import ai.koog.agents.core.agent.AIAgent
+        import ai.koog.prompt.executor.llms.all.simpleGoogleAIExecutor
+        import ai.koog.prompt.executor.clients.google.GoogleModels
+        import kotlinx.coroutines.runBlocking
+        -->
+        ```kotlin
+        fun main() = runBlocking {
+            // Get an API key from the GOOGLE_API_KEY environment variable
+            val apiKey = System.getenv("GOOGLE_API_KEY")
+                ?: error("The API key is not set.")
+            
+            // Create an agent
+            val agent = AIAgent(
+                promptExecutor = simpleGoogleAIExecutor(apiKey),
+                llmModel = GoogleModels.Gemini2_5Pro
+            )
         
-        // Create an agent
-        val agent = AIAgent(
-            promptExecutor = simpleGoogleAIExecutor(apiKey),
-            llmModel = GoogleModels.Gemini2_5Pro
-        )
-    
-        // Run the agent
-        val result = agent.run("Hello! How can you help me?")
-        println(result)
-    }
-    ```
-    <!--- KNIT example-getting-started-03.kt -->
+            // Run the agent
+            val result = agent.run("Hello! How can you help me?")
+            println(result)
+        }
+        ```
+        <!--- KNIT example-getting-started-03.kt -->
+
+    === "Java"
+
+        ```java
+        AIAgent<String, String> agent = AIAgent.builder()
+            .promptExecutor(simpleGoogleAIExecutor(System.getenv("GOOGLE_API_KEY")))
+            .llmModel(GoogleModels.Gemini2_5Pro)
+            .build();
+
+        System.out.println(agent.run("Hello! How can you help me?"));
+        ```
 
     The example can produce the following output:
 
@@ -352,36 +390,52 @@ To use Koog, you need to include all necessary dependencies in your build config
 
     The example below creates and runs a simple AI agent using the `deepseek-chat` model.
 
-    <!--- INCLUDE
-    import ai.koog.agents.core.agent.AIAgent
-    import ai.koog.prompt.executor.clients.deepseek.DeepSeekLLMClient
-    import ai.koog.prompt.executor.llms.MultiLLMPromptExecutor
-    import ai.koog.prompt.executor.clients.deepseek.DeepSeekModels
-    import kotlinx.coroutines.runBlocking
-    -->
-    ```kotlin
-    fun main() = runBlocking {
-        // Get an API key from the DEEPSEEK_API_KEY environment variable
-        val apiKey = System.getenv("DEEPSEEK_API_KEY")
-            ?: error("The API key is not set.")
+    === "Kotlin"
+
+        <!--- INCLUDE
+        import ai.koog.agents.core.agent.AIAgent
+        import ai.koog.prompt.executor.clients.deepseek.DeepSeekLLMClient
+        import ai.koog.prompt.executor.llms.MultiLLMPromptExecutor
+        import ai.koog.prompt.executor.clients.deepseek.DeepSeekModels
+        import kotlinx.coroutines.runBlocking
+        -->
+        ```kotlin
+        fun main() = runBlocking {
+            // Get an API key from the DEEPSEEK_API_KEY environment variable
+            val apiKey = System.getenv("DEEPSEEK_API_KEY")
+                ?: error("The API key is not set.")
+            
+            // Create an LLM client
+            val deepSeekClient = DeepSeekLLMClient(apiKey)
         
-        // Create an LLM client
-        val deepSeekClient = DeepSeekLLMClient(apiKey)
-    
-        // Create an agent
-        val agent = AIAgent(
-            // Create a prompt executor using the LLM client
-            promptExecutor = MultiLLMPromptExecutor(deepSeekClient),
-            // Provide a model
-            llmModel = DeepSeekModels.DeepSeekChat
-        )
-    
-        // Run the agent
-        val result = agent.run("Hello! How can you help me?")
-        println(result)
-    }
-    ```
-    <!--- KNIT example-getting-started-04.kt -->
+            // Create an agent
+            val agent = AIAgent(
+                // Create a prompt executor using the LLM client
+                promptExecutor = MultiLLMPromptExecutor(deepSeekClient),
+                // Provide a model
+                llmModel = DeepSeekModels.DeepSeekChat
+            )
+        
+            // Run the agent
+            val result = agent.run("Hello! How can you help me?")
+            println(result)
+        }
+        ```
+        <!--- KNIT example-getting-started-04.kt -->
+
+    === "Java"
+
+        ```java
+        // In Java, use the provided client and executor classes directly
+        DeepSeekLLMClient deepSeekClient = new DeepSeekLLMClient(System.getenv("DEEPSEEK_API_KEY"));
+
+        AIAgent<String, String> agent = AIAgent.builder()
+            .promptExecutor(new MultiLLMPromptExecutor(deepSeekClient))
+            .llmModel(DeepSeekModels.DeepSeekChat)
+            .build();
+
+        System.out.println(agent.run("Hello! How can you help me?"));
+        ```
 
     The example can produce the following output:
 
@@ -393,30 +447,43 @@ To use Koog, you need to include all necessary dependencies in your build config
 
     The example below creates and runs a simple AI agent using the [`GPT-4o`](https://openrouter.ai/openai/gpt-4o) model.
 
-    <!--- INCLUDE
-    import ai.koog.agents.core.agent.AIAgent
-    import ai.koog.prompt.executor.llms.all.simpleOpenRouterExecutor
-    import ai.koog.prompt.executor.clients.openrouter.OpenRouterModels
-    import kotlinx.coroutines.runBlocking
-    -->
-    ```kotlin
-    fun main() = runBlocking {
-        // Get an API key from the OPENROUTER_API_KEY environment variable
-        val apiKey = System.getenv("OPENROUTER_API_KEY")
-            ?: error("The API key is not set.")
+    === "Kotlin"
+
+        <!--- INCLUDE
+        import ai.koog.agents.core.agent.AIAgent
+        import ai.koog.prompt.executor.llms.all.simpleOpenRouterExecutor
+        import ai.koog.prompt.executor.clients.openrouter.OpenRouterModels
+        import kotlinx.coroutines.runBlocking
+        -->
+        ```kotlin
+        fun main() = runBlocking {
+            // Get an API key from the OPENROUTER_API_KEY environment variable
+            val apiKey = System.getenv("OPENROUTER_API_KEY")
+                ?: error("The API key is not set.")
+            
+            // Create an agent
+            val agent = AIAgent(
+                promptExecutor = simpleOpenRouterExecutor(apiKey),
+                llmModel = OpenRouterModels.GPT4o
+            )
         
-        // Create an agent
-        val agent = AIAgent(
-            promptExecutor = simpleOpenRouterExecutor(apiKey),
-            llmModel = OpenRouterModels.GPT4o
-        )
-    
-        // Run the agent
-        val result = agent.run("Hello! How can you help me?")
-        println(result)
-    }
-    ```
-    <!--- KNIT example-getting-started-05.kt -->
+            // Run the agent
+            val result = agent.run("Hello! How can you help me?")
+            println(result)
+        }
+        ```
+        <!--- KNIT example-getting-started-05.kt -->
+
+    === "Java"
+
+        ```java
+        AIAgent<String, String> agent = AIAgent.builder()
+            .promptExecutor(simpleOpenRouterExecutor(System.getenv("OPENROUTER_API_KEY")))
+            .llmModel(OpenRouterModels.GPT4o)
+            .build();
+
+        System.out.println(agent.run("Hello! How can you help me?"));
+        ```
 
     The example can produce the following output:
 
@@ -428,33 +495,49 @@ To use Koog, you need to include all necessary dependencies in your build config
 
     The example below creates and runs a simple AI agent using the [`Claude Sonnet 4.5`](https://www.anthropic.com/news/claude-sonnet-4-5) model.
 
-    <!--- INCLUDE
-    import ai.koog.agents.core.agent.AIAgent
-    import ai.koog.prompt.executor.llms.all.simpleBedrockExecutor
-    import ai.koog.prompt.executor.clients.bedrock.BedrockModels
-    import kotlinx.coroutines.runBlocking
-    -->
-    ```kotlin
-    fun main() = runBlocking {
-        // Get access keys from the AWS_BEDROCK_ACCESS_KEY and AWS_BEDROCK_SECRET_ACCESS_KEY environment variables
-        val awsAccessKeyId = System.getenv("AWS_BEDROCK_ACCESS_KEY")
-            ?: error("The access key is not set.")
-    
-        val awsSecretAccessKey = System.getenv("AWS_BEDROCK_SECRET_ACCESS_KEY")
-            ?: error("The secret access key is not set.")
+    === "Kotlin"
+
+        <!--- INCLUDE
+        import ai.koog.agents.core.agent.AIAgent
+        import ai.koog.prompt.executor.llms.all.simpleBedrockExecutor
+        import ai.koog.prompt.executor.clients.bedrock.BedrockModels
+        import kotlinx.coroutines.runBlocking
+        -->
+        ```kotlin
+        fun main() = runBlocking {
+            // Get access keys from the AWS_BEDROCK_ACCESS_KEY and AWS_BEDROCK_SECRET_ACCESS_KEY environment variables
+            val awsAccessKeyId = System.getenv("AWS_BEDROCK_ACCESS_KEY")
+                ?: error("The access key is not set.")
         
-        // Create an agent
-        val agent = AIAgent(
-            promptExecutor = simpleBedrockExecutor(awsAccessKeyId, awsSecretAccessKey),
-            llmModel = BedrockModels.AnthropicClaude4_5Sonnet
-        )
-    
-        // Run the agent
-        val result = agent.run("Hello! How can you help me?")
-        println(result)
-    }
-    ```
-    <!--- KNIT example-getting-started-06.kt -->
+            val awsSecretAccessKey = System.getenv("AWS_BEDROCK_SECRET_ACCESS_KEY")
+                ?: error("The secret access key is not set.")
+            
+            // Create an agent
+            val agent = AIAgent(
+                promptExecutor = simpleBedrockExecutor(awsAccessKeyId, awsSecretAccessKey),
+                llmModel = BedrockModels.AnthropicClaude4_5Sonnet
+            )
+        
+            // Run the agent
+            val result = agent.run("Hello! How can you help me?")
+            println(result)
+        }
+        ```
+        <!--- KNIT example-getting-started-06.kt -->
+
+    === "Java"
+
+        ```java
+        String accessKey = System.getenv("AWS_BEDROCK_ACCESS_KEY");
+        String secretKey = System.getenv("AWS_BEDROCK_SECRET_ACCESS_KEY");
+
+        AIAgent<String, String> agent = AIAgent.builder()
+            .promptExecutor(simpleBedrockExecutor(accessKey, secretKey,null, new BedrockClientSettings()))
+            .llmModel(BedrockModels.INSTANCE.getAnthropicClaude4_5Sonnet())
+            .build();
+
+        System.out.println(agent.run("Hello! How can you help me?"));
+        ```
 
     The example can produce the following output:
 
@@ -477,26 +560,39 @@ To use Koog, you need to include all necessary dependencies in your build config
 
     The example below creates and runs a simple AI agent using the [`llama3.2`](https://ollama.com/library/llama3.2) model.
 
-    <!--- INCLUDE
-    import ai.koog.agents.core.agent.AIAgent
-    import ai.koog.prompt.executor.llms.all.simpleOllamaAIExecutor
-    import ai.koog.prompt.executor.ollama.client.OllamaModels
-    import kotlinx.coroutines.runBlocking
-    -->
-    ```kotlin
-    fun main() = runBlocking {
-        // Create an agent
-        val agent = AIAgent(
-            promptExecutor = simpleOllamaAIExecutor(),
-            llmModel = OllamaModels.Meta.LLAMA_3_2
-        )
+    === "Kotlin"
 
-        // Run the agent
-        val result = agent.run("Hello! How can you help me?")
-        println(result)
-    }
-    ```
-    <!--- KNIT example-getting-started-07.kt -->
+        <!--- INCLUDE
+        import ai.koog.agents.core.agent.AIAgent
+        import ai.koog.prompt.executor.llms.all.simpleOllamaAIExecutor
+        import ai.koog.prompt.executor.ollama.client.OllamaModels
+        import kotlinx.coroutines.runBlocking
+        -->
+        ```kotlin
+        fun main() = runBlocking {
+            // Create an agent
+            val agent = AIAgent(
+                promptExecutor = simpleOllamaAIExecutor(),
+                llmModel = OllamaModels.Meta.LLAMA_3_2
+            )
+
+            // Run the agent
+            val result = agent.run("Hello! How can you help me?")
+            println(result)
+        }
+        ```
+        <!--- KNIT example-getting-started-07.kt -->
+
+    === "Java"
+
+        ```java
+        AIAgent<String, String> agent = AIAgent.builder()
+            .promptExecutor(simpleOllamaAIExecutor("http://localhost:11434"))
+            .llmModel(OllamaModels.Meta.LLAMA_3_2)
+            .build();
+
+        System.out.println(agent.run("Hello! How can you help me?"));
+        ```
 
     The example can produce the following output:
 

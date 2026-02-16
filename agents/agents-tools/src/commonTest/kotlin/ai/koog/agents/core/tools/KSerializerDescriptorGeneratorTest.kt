@@ -2,6 +2,7 @@ package ai.koog.agents.core.tools
 
 import ai.koog.agents.core.tools.annotations.InternalAgentToolsApi
 import ai.koog.agents.core.tools.annotations.LLMDescription
+import ai.koog.agents.core.tools.generator.asToolDescriptor
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
@@ -11,7 +12,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
 @OptIn(InternalAgentToolsApi::class)
-class SerialToToolDescriptionTest {
+class KSerializerDescriptorGeneratorTest {
 
     // ---------- Helper models ----------
 

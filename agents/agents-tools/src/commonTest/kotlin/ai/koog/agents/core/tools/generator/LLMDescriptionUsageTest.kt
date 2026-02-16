@@ -1,5 +1,6 @@
-package ai.koog.agents.core.tools
+package ai.koog.agents.core.tools.generator
 
+import ai.koog.agents.core.tools.ToolParameterType
 import ai.koog.agents.core.tools.annotations.InternalAgentToolsApi
 import ai.koog.agents.core.tools.annotations.LLMDescription
 import kotlinx.serialization.Serializable

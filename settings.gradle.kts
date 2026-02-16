@@ -12,7 +12,6 @@ pluginManagement {
 include(":agents:agents-core")
 include(":agents:agents-ext")
 include(":agents:agents-planner")
-include(":agents:agents-cli")
 
 include(":agents:agents-features:agents-features-acp")
 include(":agents:agents-features:agents-features-event-handler")
@@ -32,6 +31,8 @@ include(":agents:agents-mcp-server")
 include(":agents:agents-test")
 include(":agents:agents-tools")
 include(":agents:agents-utils")
+
+include(":cli-transport")
 
 include(":integration-tests")
 
@@ -95,3 +96,5 @@ include(":docs")
 
 include(":test-utils")
 include(":utils")
+
+include("cli-transport")

@@ -32,9 +32,9 @@ kotlin {
                 implementation(project(":agents:agents-mcp"))
                 implementation(project(":agents:agents-features:agents-features-opentelemetry"))
                 implementation(project(":agents:agents-mcp-server"))
-                implementation(project(":agents:agents-cli"))
                 implementation(project(":agents:agents-planner"))
                 implementation(project(":agents:agents-test"))
+                implementation(project(":cli-transport"))
                 implementation(
                     project(":prompt:prompt-executor:prompt-executor-clients:prompt-executor-anthropic-client")
                 )

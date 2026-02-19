@@ -12,10 +12,12 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(libs.kotlinx.serialization.json)
                 api(project(":rag:rag-base"))
                 implementation(project(":prompt:prompt-markdown"))
                 implementation(project(":prompt:prompt-xml"))
+
+                api(libs.kotlinx.serialization.json)
+                api(libs.kotlinx.schema.generator.json)
             }
         }
 

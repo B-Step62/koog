@@ -1,7 +1,7 @@
 package ai.koog.agents.core.tools
 
 import ai.koog.agents.core.tools.annotations.InternalAgentToolsApi
-import ai.koog.agents.core.tools.generator.asToolDescriptor
+import ai.koog.agents.core.tools.schema.asToolDescriptor
 import ai.koog.agents.core.tools.serialization.ToolJson
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable

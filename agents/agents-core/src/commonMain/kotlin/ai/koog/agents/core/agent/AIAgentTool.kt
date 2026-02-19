@@ -3,7 +3,7 @@ package ai.koog.agents.core.agent
 import ai.koog.agents.core.agent.AIAgentTool.AgentToolResult
 import ai.koog.agents.core.tools.Tool
 import ai.koog.agents.core.tools.annotations.InternalAgentToolsApi
-import ai.koog.agents.core.tools.generator.asToolDescriptor
+import ai.koog.agents.core.tools.schema.asToolDescriptor
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json

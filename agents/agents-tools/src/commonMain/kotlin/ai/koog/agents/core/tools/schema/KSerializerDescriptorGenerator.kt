@@ -1,4 +1,4 @@
-package ai.koog.agents.core.tools.generator
+package ai.koog.agents.core.tools.schema
 
 import ai.koog.agents.core.tools.ToolDescriptor
 import ai.koog.agents.core.tools.ToolParameterDescriptor

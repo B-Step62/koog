@@ -2,7 +2,7 @@ package ai.koog.agents.core.tools
 
 import ai.koog.agents.core.tools.annotations.InternalAgentToolsApi
 import ai.koog.agents.core.tools.annotations.LLMDescription
-import ai.koog.agents.core.tools.generator.asToolDescriptor
+import ai.koog.agents.core.tools.schema.asToolDescriptor
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable

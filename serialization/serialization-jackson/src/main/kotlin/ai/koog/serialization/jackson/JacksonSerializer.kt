@@ -20,13 +20,12 @@ import kotlin.reflect.jvm.javaType
  * @param objectMapper The Jackson [ObjectMapper] to use for serialization/deserialization.
  */
 public class JacksonSerializer(
-    public val objectMapper: ObjectMapper,
+    objectMapper: ObjectMapper,
 ) : KoogSerializer {
-
-    init {
+    private val objectMapper = objectMapper
+        .copy()
         // Register JSONElementModule to handle JSONElement serialization/deserialization
-        objectMapper.registerModule(JSONElementModule())
-    }
+        .registerModule(JSONElementModule())
 
     override fun <T> serializeToString(value: T, typeToken: TypeToken): String {
         return objectMapper.writeValueAsString(value)

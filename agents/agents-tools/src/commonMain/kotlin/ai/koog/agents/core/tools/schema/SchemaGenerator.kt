@@ -3,7 +3,10 @@ package ai.koog.agents.core.tools.schema
 import ai.koog.agents.core.tools.ToolDescriptor
 import ai.koog.agents.core.tools.ToolParameterDescriptor
 import ai.koog.agents.core.tools.ToolParameterType
+import ai.koog.agents.core.tools.annotations.LLMDescription
 import ai.koog.serialization.TypeToken
+import kotlinx.schema.generator.json.serialization.SerializationClassJsonSchemaGenerator
+import kotlinx.schema.generator.json.serialization.SerializationClassSchemaIntrospector
 import kotlinx.schema.json.AdditionalPropertiesSchema
 import kotlinx.schema.json.AllowAdditionalProperties
 import kotlinx.schema.json.AnyOfPropertyDefinition
@@ -20,6 +23,18 @@ import kotlinx.schema.json.PropertyDefinition
 import kotlinx.schema.json.ReferencePropertyDefinition
 import kotlinx.schema.json.StringPropertyDefinition
 import kotlinx.schema.json.ValuePropertyDefinition
+
+internal val serializationGenerator by lazy {
+    SerializationClassJsonSchemaGenerator(
+        introspectorConfig = SerializationClassSchemaIntrospector.Config(
+            descriptionExtractor = { annotations ->
+                annotations
+                    .filterIsInstance<LLMDescription>()
+                    .firstOrNull()?.description
+            }
+        )
+    )
+}
 
 internal expect fun getJsonSchema(typeToken: TypeToken): JsonSchema
 
@@ -68,8 +83,15 @@ private fun PropertyDefinition.toToolParameterType(schema: JsonSchema): ToolPara
         val isNullableType = JsonSchemaConstants.Types.NULL in type
 
         val parameterType = when (this) {
-            is StringPropertyDefinition ->
-                ToolParameterType.String
+            is StringPropertyDefinition -> {
+                val enum = this.enum
+
+                if (enum != null) {
+                    ToolParameterType.Enum(enum.toTypedArray())
+                } else {
+                    ToolParameterType.String
+                }
+            }
 
             is BooleanPropertyDefinition ->
                 ToolParameterType.Boolean
@@ -122,17 +144,6 @@ private fun PropertyDefinition.toToolParameterType(schema: JsonSchema): ToolPara
             )
         } else {
             parameterType
-        }
-    }
-
-    is StringPropertyDefinition -> {
-        val enum = this.enum
-
-        type
-        if (enum != null) {
-            ToolParameterType.Enum(enum.toTypedArray())
-        } else {
-            ToolParameterType.String
         }
     }
 

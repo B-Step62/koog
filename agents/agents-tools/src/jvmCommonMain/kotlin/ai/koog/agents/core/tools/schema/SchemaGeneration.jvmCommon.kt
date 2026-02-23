@@ -6,12 +6,10 @@ import ai.koog.serialization.KotlinTypeToken
 import ai.koog.serialization.TypeToken
 import ai.koog.serialization.annotations.InternalKoogSerializationApi
 import kotlinx.schema.generator.json.ReflectionClassJsonSchemaGenerator
-import kotlinx.schema.generator.json.serialization.SerializationClassJsonSchemaGenerator
 import kotlinx.schema.json.JsonSchema
 import kotlinx.serialization.serializerOrNull
 import kotlin.reflect.KClass
 
-private val serializationGenerator by lazy { SerializationClassJsonSchemaGenerator.Default }
 private val reflectionGenerator by lazy { ReflectionClassJsonSchemaGenerator.Default }
 
 @OptIn(InternalKoogSerializationApi::class)

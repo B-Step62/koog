@@ -5,11 +5,10 @@ import ai.koog.agents.core.tools.ToolParameterDescriptor
 import ai.koog.agents.core.tools.ToolParameterType
 import ai.koog.agents.core.tools.annotations.LLMDescription
 import ai.koog.serialization.typeToken
-import kotlinx.schema.json.encodeToString
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class SchemaGeneratorTest {
     @Serializable
@@ -62,13 +61,11 @@ class SchemaGeneratorTest {
         data class SubClass2(
             override val id: String,
             val property2: Int,
-            // This property produces StackOverflowError when generating the schema
-            // https://github.com/Kotlin/kotlinx-schema/issues/192
-            // val recursiveTypeProperty: TestClosedPolymorphism,
         ) : TestClosedPolymorphism()
     }
 
     @Suppress("unused")
+    @Serializable
     enum class TestEnum {
         One,
         Two
@@ -79,9 +76,26 @@ class SchemaGeneratorTest {
     data object TestObject
 
     @Test
-    fun test() {
+    fun testGeneratesToolDescriptorFromSerializableClass() {
         val toolName = "test_tool"
         val toolDescription = "Test tool description"
+
+        val nestedObject = ToolParameterType.Object(
+            properties = listOf(
+                ToolParameterDescriptor(
+                    name = "foo",
+                    description = "Nested foo property",
+                    type = ToolParameterType.String,
+                ),
+                ToolParameterDescriptor(
+                    name = "bar",
+                    description = "",
+                    type = ToolParameterType.Integer,
+                ),
+            ),
+            requiredProperties = listOf("foo", "bar"),
+            additionalProperties = false,
+        )
 
         val expectedDescriptor = ToolDescriptor(
             name = toolName,
@@ -151,39 +165,13 @@ class SchemaGeneratorTest {
                 ToolParameterDescriptor(
                     name = "nestedProperty",
                     description = "Nested property class",
-                    type = ToolParameterType.Object(
-                        properties = listOf(
-                            ToolParameterDescriptor(
-                                name = "foo",
-                                description = "Nested foo property",
-                                type = ToolParameterType.String,
-                            ),
-                            ToolParameterDescriptor(
-                                name = "bar",
-                                description = "",
-                                type = ToolParameterType.Integer,
-                            )
-                        )
-                    )
+                    type = nestedObject,
                 ),
                 ToolParameterDescriptor(
                     name = "nestedListProperty",
                     description = "",
                     type = ToolParameterType.List(
-                        ToolParameterType.Object(
-                            properties = listOf(
-                                ToolParameterDescriptor(
-                                    name = "foo",
-                                    description = "Nested foo property",
-                                    type = ToolParameterType.String,
-                                ),
-                                ToolParameterDescriptor(
-                                    name = "bar",
-                                    description = "",
-                                    type = ToolParameterType.Integer,
-                                )
-                            )
-                        )
+                        itemsType = nestedObject
                     )
                 ),
                 ToolParameterDescriptor(
@@ -191,21 +179,9 @@ class SchemaGeneratorTest {
                     description = "",
                     type = ToolParameterType.Object(
                         properties = emptyList(),
+                        requiredProperties = emptyList(),
                         additionalProperties = true,
-                        additionalPropertiesType = ToolParameterType.Object(
-                            properties = listOf(
-                                ToolParameterDescriptor(
-                                    name = "foo",
-                                    description = "Nested foo property",
-                                    type = ToolParameterType.String,
-                                ),
-                                ToolParameterDescriptor(
-                                    name = "bar",
-                                    description = "",
-                                    type = ToolParameterType.Integer,
-                                )
-                            )
-                        )
+                        additionalPropertiesType = nestedObject,
                     )
                 ),
                 ToolParameterDescriptor(
@@ -226,9 +202,12 @@ class SchemaGeneratorTest {
                                             description = "",
                                             type = ToolParameterType.String,
                                         )
-                                    )
+                                    ),
+                                    requiredProperties = listOf("id", "property1"),
+                                    additionalProperties = false,
                                 ),
-                                name = "", description = "",
+                                name = "",
+                                description = "",
                             ),
                             ToolParameterDescriptor(
                                 type = ToolParameterType.Object(
@@ -241,11 +220,14 @@ class SchemaGeneratorTest {
                                         ToolParameterDescriptor(
                                             name = "property2",
                                             description = "",
-                                            type = ToolParameterType.String,
+                                            type = ToolParameterType.Integer,
                                         )
-                                    )
+                                    ),
+                                    requiredProperties = listOf("id", "property2"),
+                                    additionalProperties = false,
                                 ),
-                                name = "", description = "",
+                                name = "",
+                                description = "",
                             ),
                         )
                     )
@@ -258,7 +240,10 @@ class SchemaGeneratorTest {
                 ToolParameterDescriptor(
                     name = "objectProperty",
                     description = "",
-                    type = ToolParameterType.Object(properties = emptyList()),
+                    type = ToolParameterType.Object(
+                        properties = emptyList(),
+                        additionalProperties = false,
+                    ),
                 )
             ),
         )
@@ -269,9 +254,6 @@ class SchemaGeneratorTest {
             toolDescription = toolDescription,
         )
 
-//        println(actualDescriptor)
-//        assertEquals(expectedDescriptor, actualDescriptor)
-        val testSchema = getJsonSchema(typeToken<TestClass>())
-        println(testSchema.encodeToString(json = Json { prettyPrint = true } ))
+        assertEquals(expectedDescriptor, actualDescriptor)
     }
 }

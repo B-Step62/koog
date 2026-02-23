@@ -19,7 +19,18 @@ public data class ToolParameterDescriptor(
     val name: String,
     val description: String,
     val type: ToolParameterType
-)
+) {
+    override fun toString(): String = buildString {
+        appendLine("ToolParameterDescriptor(")
+        appendLine("  name = $name,")
+        appendLine("  description = $description,")
+
+        appendLine("  type =")
+        appendLine(type.toString().prependIndent("    "))
+
+        append(")")
+    }
+}
 
 /**
  * Sealed class representing different types of tool parameters.
@@ -60,6 +71,12 @@ public sealed class ToolParameterType(public val name: kotlin.String) {
      */
     public data class Enum(val entries: Array<kotlin.String>) : ToolParameterType("ENUM") {
         override fun equals(other: Any?): kotlin.Boolean = other is Enum && this.entries.contentEquals(other.entries)
+
+        override fun toString(): kotlin.String = buildString {
+            appendLine("ToolParameterType.Enum(")
+            appendLine("  entries = [${entries.joinToString()}]")
+            append(")")
+        }
     }
 
     /**
@@ -67,7 +84,14 @@ public sealed class ToolParameterType(public val name: kotlin.String) {
      *
      * @property itemsType The type definition for the items within the array.
      */
-    public data class List(val itemsType: ToolParameterType) : ToolParameterType("ARRAY")
+    public data class List(val itemsType: ToolParameterType) : ToolParameterType("ARRAY") {
+        override fun toString(): kotlin.String = buildString {
+            appendLine("ToolParameterType.List(")
+            appendLine("  itemsType =")
+            appendLine(itemsType.toString().prependIndent("    "))
+            append(")")
+        }
+    }
 
     /**
      * Represents an anyOf type parameter.
@@ -79,6 +103,17 @@ public sealed class ToolParameterType(public val name: kotlin.String) {
     public data class AnyOf(val types: Array<ToolParameterDescriptor>) : ToolParameterType("ANYOF") {
         override fun equals(other: Any?): kotlin.Boolean = other is AnyOf && this.types.contentEquals(other.types)
         override fun hashCode(): Int = types.contentHashCode()
+
+        override fun toString(): kotlin.String = buildString {
+            appendLine("ToolParameterType.AnyOf(")
+            appendLine("  types = [")
+            types.forEach {
+                append(it.toString().prependIndent("    "))
+                appendLine(",")
+            }
+            appendLine("  ]")
+            append(")")
+        }
     }
 
     /**
@@ -99,7 +134,26 @@ public sealed class ToolParameterType(public val name: kotlin.String) {
         val requiredProperties: kotlin.collections.List<kotlin.String> = listOf(),
         val additionalProperties: kotlin.Boolean? = null,
         val additionalPropertiesType: ToolParameterType? = null,
-    ) : ToolParameterType("OBJECT")
+    ) : ToolParameterType("OBJECT") {
+        override fun toString(): kotlin.String = buildString {
+            appendLine("ToolParameterType.Object(")
+
+            appendLine("  properties = [")
+            properties.forEach {
+                append(it.toString().prependIndent("    "))
+                appendLine(",")
+            }
+            appendLine("  ],")
+
+            appendLine("  requiredProperties = [${requiredProperties.joinToString()}],")
+            appendLine("  additionalProperties = $additionalProperties,")
+
+            appendLine("  additionalPropertiesType =")
+            appendLine(additionalPropertiesType.toString().prependIndent("    "))
+
+            append(")")
+        }
+    }
 
     /**
      * Companion object for the enclosing class. Provides utility functions for creating instances

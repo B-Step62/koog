@@ -1,15 +1,9 @@
-package ai.koog.agents.tools;
+package ai.koog.agents.core.tools;
 
-import ai.koog.agents.core.tools.Tool;
 import ai.koog.agents.core.tools.reflect.java.ToolFromJavaMethod;
 import ai.koog.agents.tools.test.Payload;
 import ai.koog.agents.tools.test.utils.ToolUtils;
-import kotlin.Unit;
 import kotlin.coroutines.Continuation;
-import kotlin.coroutines.CoroutineContext;
-import kotlinx.coroutines.BuildersKt;
-import kotlinx.coroutines.CoroutineScope;
-import kotlinx.coroutines.Dispatchers;
 import kotlinx.serialization.json.Json;
 import kotlinx.serialization.json.JsonElement;
 import kotlinx.serialization.json.JsonObject;
@@ -17,7 +11,6 @@ import kotlinx.serialization.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
-import java.util.Map;
 
 import static ai.koog.agents.core.tools.reflect.java.JavaIUtilsKt.asTool;
 import static org.junit.jupiter.api.Assertions.*;

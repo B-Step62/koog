@@ -1,6 +1,5 @@
-package ai.koog.agents.tools;
+package ai.koog.agents.core.tools;
 
-import ai.koog.agents.core.tools.annotations.LLMDescription;
 import ai.koog.agents.tools.test.Payload;
 
 // TODO: Remove @LLMDescription, and fix koog/agents/agents-tools/src/jvmMain/kotlin/ai/koog/agents/core/tools/reflect/java/javaIUtils.kt so that it detects parameter names always (currently: arg0, arg1, arg2, etc. -- see /Users/Vadim.Briliantov/koog/agents/agents-tools/src/jvmTest/java/ai/koog/agents/tools/JavaMethodToolsTest.java)

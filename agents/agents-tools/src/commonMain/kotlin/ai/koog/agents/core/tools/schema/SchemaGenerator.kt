@@ -56,7 +56,7 @@ internal fun getToolDescriptor(
         .map { (name, property) ->
             ToolParameterDescriptor(
                 name = name,
-                description = (property as? CommonSchemaAttributes)?.description.orEmpty(),
+                description = property.descriptionOrEmpty,
                 type = property.toToolParameterType(schema)
             )
         }
@@ -161,7 +161,7 @@ private fun PropertyDefinition.toToolParameterType(schema: JsonSchema): ToolPara
     is AnyOfPropertyDefinition -> {
         ToolParameterType.AnyOf(
             types = anyOf
-                .map { ToolParameterDescriptor(type = it.toToolParameterType(schema), name = "", description = "") }
+                .map { ToolParameterDescriptor(type = it.toToolParameterType(schema), description = it.descriptionOrEmpty, name = "") }
                 .toTypedArray()
         )
     }
@@ -170,7 +170,7 @@ private fun PropertyDefinition.toToolParameterType(schema: JsonSchema): ToolPara
     is OneOfPropertyDefinition -> {
         ToolParameterType.AnyOf(
             types = oneOf
-                .map { ToolParameterDescriptor(type = it.toToolParameterType(schema), name = "", description = "") }
+                .map { ToolParameterDescriptor(type = it.toToolParameterType(schema), description = it.descriptionOrEmpty, name = "") }
                 .toTypedArray()
         )
     }
@@ -178,3 +178,6 @@ private fun PropertyDefinition.toToolParameterType(schema: JsonSchema): ToolPara
     else ->
         throw IllegalArgumentException("Unsupported property definition type: $this")
 }
+
+private val PropertyDefinition.descriptionOrEmpty: String get() =
+    (this as? CommonSchemaAttributes)?.description.orEmpty()

@@ -76,8 +76,13 @@ class McpToolTest {
                     optionalParameters = listOf(
                         ToolParameterDescriptor(
                             name = "title",
-                            type = ToolParameterType.String,
                             description = "Title to use in the greeting",
+                            type = ToolParameterType.AnyOf(
+                                types = arrayOf(
+                                    ToolParameterDescriptor(type = ToolParameterType.Null, name = "", description = ""),
+                                    ToolParameterDescriptor(type = ToolParameterType.String, name = "", description = "")
+                                )
+                            )
                         )
                     )
                 ),

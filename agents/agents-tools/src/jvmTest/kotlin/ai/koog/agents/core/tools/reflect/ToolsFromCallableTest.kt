@@ -272,31 +272,195 @@ class ToolsFromCallableTest {
                 Arguments.of(
                     ToolSet1Impl().asTools(json),
                     """
-#0: ToolDescriptor(name=tool1, description=The best tool number 1, requiredParameters=[ToolParameterDescriptor(name=arg, description=int argument, type=Integer)], optionalParameters=[])
-#1: ToolDescriptor(name=tool2, description=Wonderful tool number 2, requiredParameters=[ToolParameterDescriptor(name=arg, description=arg, type=Integer)], optionalParameters=[])
-#2: ToolDescriptor(name=tool4, description=Perfect tool 4, requiredParameters=[ToolParameterDescriptor(name=arg, description=int argument, type=Integer)], optionalParameters=[])
-#3: ToolDescriptor(name=toolBase1, description=Base tool 1, requiredParameters=[], optionalParameters=[])
-#4: ToolDescriptor(name=toolBase2OverriddenInInterface, description=Base tool 2 description overridden, requiredParameters=[ToolParameterDescriptor(name=intArg, description=int argument overridden, type=Integer)], optionalParameters=[])
-""".trim()
+                    #0: ToolDescriptor(
+                      name = tool1,
+                      description = The best tool number 1,
+                      requiredParameters = [
+                        ToolParameterDescriptor(
+                          name = arg,
+                          description = int argument,
+                          type =
+                            Integer
+                        ),
+                      ]
+                      optionalParameters = [
+                      ]
+                    )
+                    #1: ToolDescriptor(
+                      name = tool2,
+                      description = Wonderful tool number 2,
+                      requiredParameters = [
+                        ToolParameterDescriptor(
+                          name = arg,
+                          description = arg,
+                          type =
+                            Integer
+                        ),
+                      ]
+                      optionalParameters = [
+                      ]
+                    )
+                    #2: ToolDescriptor(
+                      name = tool4,
+                      description = Perfect tool 4,
+                      requiredParameters = [
+                        ToolParameterDescriptor(
+                          name = arg,
+                          description = int argument,
+                          type =
+                            Integer
+                        ),
+                      ]
+                      optionalParameters = [
+                      ]
+                    )
+                    #3: ToolDescriptor(
+                      name = toolBase1,
+                      description = Base tool 1,
+                      requiredParameters = [
+                      ]
+                      optionalParameters = [
+                      ]
+                    )
+                    #4: ToolDescriptor(
+                      name = toolBase2OverriddenInInterface,
+                      description = Base tool 2 description overridden,
+                      requiredParameters = [
+                        ToolParameterDescriptor(
+                          name = intArg,
+                          description = int argument overridden,
+                          type =
+                            Integer
+                        ),
+                      ]
+                      optionalParameters = [
+                      ]
+                    )
+                    """.trimIndent()
                 ),
                 Arguments.of(
                     DerivedToolSet1Impl().asTools(json),
                     """
-#0: ToolDescriptor(name=derivedTool5, description=Derived tool 5, requiredParameters=[ToolParameterDescriptor(name=arg, description=arg, type=Integer)], optionalParameters=[])
-#1: ToolDescriptor(name=tool1, description=The best tool number 1, requiredParameters=[ToolParameterDescriptor(name=arg, description=int argument, type=Integer)], optionalParameters=[])
-#2: ToolDescriptor(name=tool2, description=Wonderful tool number 2, requiredParameters=[ToolParameterDescriptor(name=arg, description=arg, type=Integer)], optionalParameters=[])
-#3: ToolDescriptor(name=tool4, description=Perfect tool 4, requiredParameters=[ToolParameterDescriptor(name=arg, description=int argument, type=Integer)], optionalParameters=[])
-#4: ToolDescriptor(name=toolBase1, description=Base tool 1, requiredParameters=[], optionalParameters=[])
-#5: ToolDescriptor(name=toolBase2OverriddenInInterface, description=Base tool 2 description overridden, requiredParameters=[ToolParameterDescriptor(name=intArg, description=int argument overridden, type=Integer)], optionalParameters=[])
-""".trim()
+                    #0: ToolDescriptor(
+                      name = derivedTool5,
+                      description = Derived tool 5,
+                      requiredParameters = [
+                        ToolParameterDescriptor(
+                          name = arg,
+                          description = arg,
+                          type =
+                            Integer
+                        ),
+                      ]
+                      optionalParameters = [
+                      ]
+                    )
+                    #1: ToolDescriptor(
+                      name = tool1,
+                      description = The best tool number 1,
+                      requiredParameters = [
+                        ToolParameterDescriptor(
+                          name = arg,
+                          description = int argument,
+                          type =
+                            Integer
+                        ),
+                      ]
+                      optionalParameters = [
+                      ]
+                    )
+                    #2: ToolDescriptor(
+                      name = tool2,
+                      description = Wonderful tool number 2,
+                      requiredParameters = [
+                        ToolParameterDescriptor(
+                          name = arg,
+                          description = arg,
+                          type =
+                            Integer
+                        ),
+                      ]
+                      optionalParameters = [
+                      ]
+                    )
+                    #3: ToolDescriptor(
+                      name = tool4,
+                      description = Perfect tool 4,
+                      requiredParameters = [
+                        ToolParameterDescriptor(
+                          name = arg,
+                          description = int argument,
+                          type =
+                            Integer
+                        ),
+                      ]
+                      optionalParameters = [
+                      ]
+                    )
+                    #4: ToolDescriptor(
+                      name = toolBase1,
+                      description = Base tool 1,
+                      requiredParameters = [
+                      ]
+                      optionalParameters = [
+                      ]
+                    )
+                    #5: ToolDescriptor(
+                      name = toolBase2OverriddenInInterface,
+                      description = Base tool 2 description overridden,
+                      requiredParameters = [
+                        ToolParameterDescriptor(
+                          name = intArg,
+                          description = int argument overridden,
+                          type =
+                            Integer
+                        ),
+                      ]
+                      optionalParameters = [
+                      ]
+                    )
+                    """.trimIndent()
                 ),
                 Arguments.of(
                     ToolSet1Impl().asToolsByInterface<ToolSet1>(json),
                     """
-#0: ToolDescriptor(name=tool1, description=The best tool number 1, requiredParameters=[ToolParameterDescriptor(name=arg, description=int argument, type=Integer)], optionalParameters=[])
-#1: ToolDescriptor(name=toolBase1, description=Base tool 1, requiredParameters=[], optionalParameters=[])
-#2: ToolDescriptor(name=toolBase2OverriddenInInterface, description=Base tool 2 description overridden, requiredParameters=[ToolParameterDescriptor(name=intArg, description=int argument overridden, type=Integer)], optionalParameters=[])
-""".trim()
+                    #0: ToolDescriptor(
+                      name = tool1,
+                      description = The best tool number 1,
+                      requiredParameters = [
+                        ToolParameterDescriptor(
+                          name = arg,
+                          description = int argument,
+                          type =
+                            Integer
+                        ),
+                      ]
+                      optionalParameters = [
+                      ]
+                    )
+                    #1: ToolDescriptor(
+                      name = toolBase1,
+                      description = Base tool 1,
+                      requiredParameters = [
+                      ]
+                      optionalParameters = [
+                      ]
+                    )
+                    #2: ToolDescriptor(
+                      name = toolBase2OverriddenInInterface,
+                      description = Base tool 2 description overridden,
+                      requiredParameters = [
+                        ToolParameterDescriptor(
+                          name = intArg,
+                          description = int argument overridden,
+                          type =
+                            Integer
+                        ),
+                      ]
+                      optionalParameters = [
+                      ]
+                    )
+                    """.trimIndent()
                 ),
             )
         }

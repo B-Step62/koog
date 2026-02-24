@@ -2,7 +2,10 @@ package ai.koog.agents.core.tools
 
 import ai.koog.agents.core.tools.annotations.InternalAgentToolsApi
 import ai.koog.agents.core.tools.schema.asToolDescriptor
+import ai.koog.agents.core.tools.schema.getToolDescriptor
 import ai.koog.agents.core.tools.serialization.ToolJson
+import ai.koog.serialization.KSerializerTypeToken
+import ai.koog.serialization.annotations.InternalKoogSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -46,7 +49,7 @@ public abstract class Tool<TArgs, TResult>(
      * @param name The name of the tool.
      * @param description Textual explanation of what the tool does and how it can be used (for the LLM).
      */
-    @OptIn(InternalAgentToolsApi::class)
+    @OptIn(InternalAgentToolsApi::class, InternalKoogSerializationApi::class)
     public constructor(
         argsSerializer: KSerializer<TArgs>,
         resultSerializer: KSerializer<TResult>,
@@ -55,7 +58,7 @@ public abstract class Tool<TArgs, TResult>(
     ) : this(
         argsSerializer = argsSerializer,
         resultSerializer = resultSerializer,
-        descriptor = argsSerializer.descriptor.asToolDescriptor(name, description)
+        descriptor = getToolDescriptor(KSerializerTypeToken(argsSerializer), name, description)
     )
 
     /**

@@ -18,7 +18,7 @@ The storage uses a typed key system to ensure type safety when storing and retri
 - `AIAgentStorageKey<T>`: A data class that represents a storage key used for identifying and accessing data. Here are
   the key features of the `AIAgentStorageKey` class:
     - The generic type parameter `T` specifies the type of data associated with this key, ensuring type safety.
-    - Each key has a `name` property which is a string identifier that uniquely represents the storage key.
+    - The `name` property for string representation of the key. Every instance of the key is unique regardless of the name.
 
 ## Usage examples
 

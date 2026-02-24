@@ -12,6 +12,7 @@ import ai.koog.serialization.annotations.InternalKoogSerializationApi
 import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import kotlin.reflect.jvm.javaType
 
 /**
@@ -20,9 +21,9 @@ import kotlin.reflect.jvm.javaType
  * @param objectMapper The Jackson [ObjectMapper] to use for serialization/deserialization.
  */
 public class JacksonSerializer(
-    objectMapper: ObjectMapper,
+    objectMapper: ObjectMapper = jacksonObjectMapper(),
 ) : KoogSerializer {
-    private val objectMapper = objectMapper
+    public val objectMapper: ObjectMapper = objectMapper
         .copy()
         // Register JSONElementModule to handle JSONElement serialization/deserialization
         .registerModule(JSONElementModule())

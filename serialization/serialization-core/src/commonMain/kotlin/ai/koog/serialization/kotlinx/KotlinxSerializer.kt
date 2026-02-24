@@ -8,9 +8,11 @@ import kotlinx.serialization.json.Json
 
 /**
  * Serializer that uses kotlinx-serialization
+ *
+ * @property json Kotlinx Json instance to use for serialization/deserialization
  */
 public class KotlinxSerializer(
-    public val json: Json,
+    public val json: Json = Json.Default,
 ) : KoogSerializer {
     override fun <T> serializeToString(value: T, typeToken: TypeToken): String {
         return json.encodeToString(kotlinxSerializer(typeToken), value)

@@ -2,13 +2,6 @@
 
 package ai.koog.prompt.executor.model
 
-import ai.koog.agents.core.tools.ToolDescriptor
-import ai.koog.prompt.dsl.Prompt
-import ai.koog.prompt.llm.LLModel
-import ai.koog.prompt.streaming.StreamFrame
-import kotlinx.coroutines.flow.Flow
-import kotlin.jvm.JvmName
-
 /**
  * An interface representing an executor for processing LLM prompts.
  * This defines methods for executing prompts against models with or without tool assistance,

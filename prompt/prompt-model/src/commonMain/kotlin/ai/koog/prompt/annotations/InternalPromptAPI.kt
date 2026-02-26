@@ -1,6 +1,5 @@
 package ai.koog.prompt.annotations
 
-
 /**
  * Indicates that the annotated API is internal to prompt-related implementations and not intended for public use.
  *

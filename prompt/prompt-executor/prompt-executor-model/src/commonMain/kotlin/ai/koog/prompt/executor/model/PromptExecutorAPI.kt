@@ -10,7 +10,6 @@ import ai.koog.prompt.streaming.StreamFrame
 import ai.koog.prompt.structure.json.generator.BasicJsonSchemaGenerator
 import ai.koog.prompt.structure.json.generator.StandardJsonSchemaGenerator
 import kotlinx.coroutines.flow.Flow
-import kotlin.jvm.JvmName
 
 /**
  * API for [PromptExecutor]

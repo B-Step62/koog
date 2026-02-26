@@ -1,4 +1,4 @@
-package ai.koog.agents.core.tools.reflect;
+package ai.koog.agents.core.tools.schema;
 
 import ai.koog.agents.core.tools.annotations.LLMDescription;
 
@@ -6,13 +6,16 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Used to test schema generation from Java functions.
+ */
 // FIXME in kotlinx-schema: constructor parameters LLMDescription doesn't work
 // fixed in https://github.com/Kotlin/kotlinx-schema/pull/203
-public class JavaFunctionSchema {
-    // @LLMDescription(description = "A test class")
+public class JavaTestFunction {
+    @LLMDescription(description = "A test class")
     public static class TestClass {
         public TestClass(
-            // @LLMDescription(description = "A string property")
+            @LLMDescription(description = "A string property")
             String stringProperty,
             int intProperty,
             long longProperty,
@@ -31,10 +34,10 @@ public class JavaFunctionSchema {
         }
     }
 
-    // @LLMDescription(description = "Nested property class")
+    @LLMDescription(description = "Nested property class")
     public static class NestedProperty {
         public NestedProperty(
-            // @LLMDescription(description = "Nested foo property")
+            @LLMDescription(description = "Nested foo property")
             String foo,
             int bar
         ) {
@@ -57,11 +60,15 @@ public class JavaFunctionSchema {
         return "";
     }
 
+    /**
+     * Java reflection method representing sampleFunction.
+     * Used for schema generation.
+     */
     public static Method FUNCTION;
 
     static {
         try {
-            FUNCTION = JavaFunctionSchema.class.getDeclaredMethod("sampleFunction", String.class, TestClass.class);
+            FUNCTION = JavaTestFunction.class.getDeclaredMethod("sampleFunction", String.class, TestClass.class);
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }

@@ -1,6 +1,7 @@
 package ai.koog.agents.core.tools.reflect
 
 import ai.koog.agents.core.tools.annotations.LLMDescription
+import ai.koog.agents.core.tools.schema.JavaTestFunction
 import kotlinx.schema.generator.json.ReflectionFunctionCallingSchemaGenerator
 import kotlinx.serialization.json.Json
 import kotlin.reflect.KFunction
@@ -82,7 +83,7 @@ class FunctionSchemaGenerationTest {
     @Test
     fun javaTest() {
         val schema = generator.generateSchemaString(
-            JavaFunctionSchema.FUNCTION.kotlinFunction as KFunction<*>
+            JavaTestFunction.FUNCTION.kotlinFunction as KFunction<*>
         )
         println(schema)
     }

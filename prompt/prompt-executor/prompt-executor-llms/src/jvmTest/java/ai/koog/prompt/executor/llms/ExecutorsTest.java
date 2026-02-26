@@ -114,8 +114,7 @@ class ExecutorsTest {
         }
 
         // then
-        assertThat(exception).hasRootCauseMessage("Throw exception for test");
-        ;
-        assertThat(exception).isInstanceOf(ExecutionException.class);
+        assertThat(exception).hasMessageContaining("Throw exception for test");
+        assertThat(exception).isInstanceOf(RuntimeException.class);
     }
 }

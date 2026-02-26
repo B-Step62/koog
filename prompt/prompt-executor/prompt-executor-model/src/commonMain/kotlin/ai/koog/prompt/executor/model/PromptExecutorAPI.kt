@@ -10,6 +10,7 @@ import ai.koog.prompt.streaming.StreamFrame
 import ai.koog.prompt.structure.json.generator.BasicJsonSchemaGenerator
 import ai.koog.prompt.structure.json.generator.StandardJsonSchemaGenerator
 import kotlinx.coroutines.flow.Flow
+import kotlin.jvm.JvmName
 
 /**
  * API for [PromptExecutor]
@@ -34,25 +35,13 @@ public interface PromptExecutorAPI : AutoCloseable {
      *
      * @param prompt The prompt containing input messages and parameters to guide the LLM execution.
      * @param model The LLM to be used for processing the prompt.
+     * @param tools An optional list of `ToolDescriptor` objects that define the tools available for the execution.
      * @return A flow emitting `StreamFrame` objects that represent the streaming output of the LLM.
      */
     public fun executeStreaming(
         prompt: Prompt,
         model: LLModel,
-    ): Flow<StreamFrame> = executeStreaming(prompt, model, emptyList())
-
-    /**
-     * Executes a given prompt using the specified LLM and returns a stream of output as a flow of `StreamFrame` objects.
-     *
-     * @param prompt The prompt containing input messages and parameters to guide the LLM execution.
-     * @param model The LLM to be used for processing the prompt.
-     * @param tools A list of `ToolDescriptor` objects that define the tools available for the execution.
-     * @return A flow emitting `StreamFrame` objects that represent the streaming output of the LLM.
-     */
-    public fun executeStreaming(
-        prompt: Prompt,
-        model: LLModel,
-        tools: List<ToolDescriptor>
+        tools: List<ToolDescriptor> = emptyList()
     ): Flow<StreamFrame>
 
     /**

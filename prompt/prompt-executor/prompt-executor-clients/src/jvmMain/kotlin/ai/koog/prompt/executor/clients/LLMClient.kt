@@ -1,0 +1,84 @@
+@file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+@file:OptIn(InternalPromptAPI::class)
+
+package ai.koog.prompt.executor.clients
+
+import ai.koog.agents.annotations.JavaAPI
+import ai.koog.agents.core.tools.ToolDescriptor
+import ai.koog.prompt.annotations.InternalPromptAPI
+import ai.koog.prompt.dsl.ModerationResult
+import ai.koog.prompt.dsl.Prompt
+import ai.koog.prompt.execution.utils.runOnIOBoundDispatcher
+import ai.koog.prompt.llm.LLModel
+import ai.koog.prompt.message.LLMChoice
+import ai.koog.prompt.message.Message
+import ai.koog.prompt.streaming.StreamFrame
+import kotlinx.coroutines.flow.Flow
+import java.util.concurrent.ExecutorService
+
+/**
+ * Common interface for direct communication with LLM providers.
+ * This interface defines methods for executing prompts and streaming responses.
+ *
+ * Implements [AutoCloseable] as LLM clients typically work with IO resources. Always close it when finished.
+ */
+public actual abstract class LLMClient actual constructor() : LLMClientAPI {
+    /**
+     * Executes a prompt and returns a list of response messages.
+     *
+     * @param prompt The prompt to execute
+     * @param model The LLM model to use
+     * @param tools Optional list of tools that can be used by the LLM
+     * @param executorService An optional [ExecutorService] that can be provided to control the execution context.
+     * @return List of response messages
+     */
+    @JavaAPI
+    @JvmOverloads
+    public fun execute(
+        prompt: Prompt,
+        model: LLModel,
+        tools: List<ToolDescriptor> = emptyList(),
+        executorService: ExecutorService? = null
+    ): List<Message.Response> = runOnIOBoundDispatcher { execute(prompt, model, tools) }
+
+    /**
+     * Executes a prompt and returns a list of LLM choices.
+     *
+     * @param prompt The prompt to execute
+     * @param tools Optional list of tools that can be used by the LLM
+     * @param model The LLM model to use
+     * @param executorService An optional [ExecutorService] that can be provided to control the execution context.
+     *  @return List of LLM choices
+     */
+    @JavaAPI
+    @JvmOverloads
+    public fun executeMultipleChoices(
+        prompt: Prompt,
+        model: LLModel,
+        tools: List<ToolDescriptor> = emptyList(),
+        executorService: ExecutorService? = null
+    ): List<LLMChoice> = runOnIOBoundDispatcher { executeMultipleChoices(prompt, model, tools) }
+
+    /**
+     * Analyzes the provided prompt for violations of content policies or other moderation criteria.
+     *
+     * @param prompt The input prompt to be analyzed for moderation.
+     * @param model The language model to be used for conducting the moderation analysis.
+     * @param executorService An optional [ExecutorService] that can be provided to control the execution context.
+     * @return The result of the moderation analysis, encapsulated in a ModerationResult object.
+     */
+    @JavaAPI
+    @JvmOverloads
+    public fun moderate(prompt: Prompt, model: LLModel, executorService: ExecutorService? = null): ModerationResult =
+        runOnIOBoundDispatcher { moderate(prompt, model) }
+
+    /**
+     * Retrieves a list of ids of available Large Language Models (LLMs) supported by the client.
+     * @param executorService An optional [ExecutorService] that can be provided to control the execution context.
+     * @return A list of model ids instances representing the available LLMs.
+     */
+    @JavaAPI
+    @JvmOverloads
+    public fun models(executorService: ExecutorService? = null): List<LLModel> =
+        runOnIOBoundDispatcher { models() }
+}

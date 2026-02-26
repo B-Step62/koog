@@ -32,7 +32,7 @@ class MultiLLMPromptExecutorTest {
     }
 
     // Mock client for Anthropic
-    private inner class MockAnthropicLLMClient : LLMClient {
+    private inner class MockAnthropicLLMClient : LLMClient() {
         override suspend fun execute(
             prompt: Prompt,
             model: LLModel,
@@ -60,7 +60,7 @@ class MultiLLMPromptExecutorTest {
     }
 
     // Mock client for Gemini
-    private inner class MockGoogleLLMClient : LLMClient {
+    private inner class MockGoogleLLMClient : LLMClient() {
         override suspend fun execute(
             prompt: Prompt,
             model: LLModel,

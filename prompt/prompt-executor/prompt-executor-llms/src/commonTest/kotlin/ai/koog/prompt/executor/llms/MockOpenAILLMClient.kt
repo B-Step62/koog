@@ -19,7 +19,7 @@ internal class MockOpenAILLMClient @JvmOverloads constructor(
     private val executeResponseContent: String = "OpenAI response",
     private val throwException: Boolean = false,
     private val clock: Clock = Clock.System,
-) : LLMClient {
+) : LLMClient() {
 
     override fun llmProvider(): LLMProvider = LLMProvider.OpenAI
 

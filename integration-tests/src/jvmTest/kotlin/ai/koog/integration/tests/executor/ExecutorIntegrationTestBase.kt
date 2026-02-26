@@ -83,9 +83,7 @@ import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.Assumptions.assumeTrue
@@ -97,8 +95,6 @@ import kotlin.io.path.pathString
 import kotlin.io.path.readBytes
 import kotlin.io.path.readText
 import kotlin.io.path.writeBytes
-import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Duration.Companion.seconds
 import kotlinx.io.files.Path as KtPath
 
 abstract class ExecutorIntegrationTestBase {
@@ -193,7 +189,7 @@ abstract class ExecutorIntegrationTestBase {
         else -> LLMParams(maxTokens = basicLimit)
     }
 
-    open fun integration_testExecute(model: LLModel) = runTest(timeout = 300.seconds) {
+    open suspend fun integration_testExecute(model: LLModel) {
         Models.assumeAvailable(model.provider)
 
         val prompt = Prompt.build("test-prompt", createNoReasoningParams(model)) {
@@ -216,7 +212,7 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testExecuteStreaming(model: LLModel) = runTest(timeout = 300.seconds) {
+    open suspend fun integration_testExecuteStreaming(model: LLModel) {
         Models.assumeAvailable(model.provider)
         assumeTrue(model.capabilities!!.contains(LLMCapability.Tools), "Model $model does not support tools")
 
@@ -271,7 +267,7 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testToolWithRequiredParams(model: LLModel) = runTest(timeout = 300.seconds) {
+    open suspend fun integration_testToolWithRequiredParams(model: LLModel) {
         Models.assumeAvailable(model.provider)
         assumeTrue(model.supports(LLMCapability.Tools), "Model $model does not support tools")
 
@@ -283,7 +279,7 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testToolWithNotRequiredOptionalParams(model: LLModel) = runTest(timeout = 300.seconds) {
+    open suspend fun integration_testToolWithNotRequiredOptionalParams(model: LLModel) {
         Models.assumeAvailable(model.provider)
         assumeTrue(model.supports(LLMCapability.Tools), "Model $model does not support tools")
 
@@ -301,7 +297,7 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testToolWithOptionalParams(model: LLModel) = runTest(timeout = 300.seconds) {
+    open suspend fun integration_testToolWithOptionalParams(model: LLModel) {
         Models.assumeAvailable(model.provider)
         assumeTrue(model.supports(LLMCapability.Tools), "Model $model does not support tools")
 
@@ -313,7 +309,7 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testToolWithNoParams(model: LLModel) = runTest(timeout = 300.seconds) {
+    open suspend fun integration_testToolWithNoParams(model: LLModel) {
         Models.assumeAvailable(model.provider)
         assumeTrue(model.supports(LLMCapability.Tools), "Model $model does not support tools")
 
@@ -333,7 +329,7 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testToolWithListEnumParams(model: LLModel) = runTest(timeout = 300.seconds) {
+    open suspend fun integration_testToolWithListEnumParams(model: LLModel) {
         Models.assumeAvailable(model.provider)
         assumeTrue(model.supports(LLMCapability.Tools), "Model $model does not support tools")
 
@@ -353,7 +349,7 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testToolWithNestedListParams(model: LLModel) = runTest(timeout = 300.seconds) {
+    open suspend fun integration_testToolWithNestedListParams(model: LLModel) {
         Models.assumeAvailable(model.provider)
         assumeTrue(model.supports(LLMCapability.Tools), "Model $model does not support tools")
 
@@ -372,7 +368,7 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testToolsWithNullParams(model: LLModel) = runTest(timeout = 300.seconds) {
+    open suspend fun integration_testToolsWithNullParams(model: LLModel) {
         Models.assumeAvailable(model.provider)
         assumeTrue(model.provider != LLMProvider.Anthropic, "Anthropic does not support anyOf")
         assumeTrue(model.supports(LLMCapability.Tools), "Model $model does not support tools")
@@ -397,7 +393,7 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testToolsWithAnyOfParams(model: LLModel) = runTest(timeout = 300.seconds) {
+    open suspend fun integration_testToolsWithAnyOfParams(model: LLModel) {
         Models.assumeAvailable(model.provider)
         assumeTrue(model.provider != LLMProvider.Anthropic, "Anthropic does not support anyOf")
         assumeTrue(model.supports(LLMCapability.Tools), "Model $model does not support tools")
@@ -419,7 +415,7 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testMarkdownStructuredDataStreaming(model: LLModel) = runTest(timeout = 300.seconds) {
+    open suspend fun integration_testMarkdownStructuredDataStreaming(model: LLModel) {
         Models.assumeAvailable(model.provider)
         assumeTrue(model != OpenAIModels.Chat.GPT4_1Nano, "Model $model is too small for structured streaming")
 
@@ -435,232 +431,228 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testMarkdownProcessingBasic(
+    open suspend fun integration_testMarkdownProcessingBasic(
         scenario: MarkdownTestScenario,
         model: LLModel
-    ) =
-        runTest(timeout = 10.minutes) {
-            Models.assumeAvailable(model.provider)
+    ) {
+        Models.assumeAvailable(model.provider)
 
-            val file = MediaTestUtils.createMarkdownFileForScenario(scenario, testResourcesDir)
+        val file = MediaTestUtils.createMarkdownFileForScenario(scenario, testResourcesDir)
 
-            val prompt = prompt("markdown-test-${scenario.name.lowercase()}") {
-                system("You are a helpful assistant that can analyze markdown files.")
+        val prompt = prompt("markdown-test-${scenario.name.lowercase()}") {
+            system("You are a helpful assistant that can analyze markdown files.")
 
-                user {
-                    markdown {
-                        +"I'm sending you a markdown file with different markdown elements. "
-                        +"Please list all the markdown elements used in it and describe its structure clearly."
-                    }
-
-                    if (model.supports(LLMCapability.Document) && model.provider != LLMProvider.OpenAI) {
-                        textFile(KtPath(file.pathString), "text/plain")
-                    } else {
-                        markdown {
-                            +file.readText()
-                        }
-                    }
+            user {
+                markdown {
+                    +"I'm sending you a markdown file with different markdown elements. "
+                    +"Please list all the markdown elements used in it and describe its structure clearly."
                 }
-            }
 
-            withRetry {
-                try {
-                    with(
-                        getExecutor(model).execute(prompt, model)
-                            .filterIsInstance<Message.Assistant>()
-                            .toSingleMessage()
-                    ) {
-                        when (scenario) {
-                            MarkdownTestScenario.MALFORMED_SYNTAX, MarkdownTestScenario.MATH_NOTATION, MarkdownTestScenario.BROKEN_LINKS, MarkdownTestScenario.IRREGULAR_TABLES -> {
-                                checkResponseBasic(this)
-                            }
-
-                            else -> {
-                                checkExecutorMediaResponse(this)
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    when (scenario) {
-                        MarkdownTestScenario.EMPTY_MARKDOWN -> {
-                            when (model.provider) {
-                                LLMProvider.Google -> {
-                                    println("Expected exception for ${scenario.name.lowercase()} image: ${e.message}")
-                                }
-                            }
-                        }
-
-                        else -> {
-                            throw e
-                        }
-                    }
-                }
-            }
-        }
-
-    open fun integration_testImageProcessing(scenario: ImageTestScenario, model: LLModel) =
-        runTest(timeout = 300.seconds) {
-            Models.assumeAvailable(model.provider)
-            assumeTrue(
-                model.supports(LLMCapability.Vision.Image),
-                "Model must support vision capability"
-            )
-
-            val imageFile = MediaTestUtils.getImageFileForScenario(scenario, testResourcesDir)
-
-            val prompt = prompt("image-test-${scenario.name.lowercase()}") {
-                system("You are a helpful assistant that can analyze images.")
-
-                user {
-                    markdown {
-                        +"I'm sending you an image. Please analyze it and identify the image format if possible."
-                    }
-
-                    image(KtPath(imageFile.pathString))
-                }
-            }
-
-            withRetry {
-                try {
-                    checkExecutorMediaResponse(getExecutor(model).execute(prompt, model).single())
-                } catch (e: LLMClientException) {
-                    // For some edge cases, exceptions are expected
-                    when (scenario) {
-                        ImageTestScenario.LARGE_IMAGE_ANTHROPIC, ImageTestScenario.LARGE_IMAGE -> {
-                            val message = e.message.shouldNotBeNull()
-
-                            listOf(
-                                "Status code: 400",
-                                "image exceeds",
-                                "Could not process image"
-                            ).any { it in message }
-                                .shouldBe(true, "Must contain error message from the list")
-                        }
-
-                        ImageTestScenario.CORRUPTED_IMAGE, ImageTestScenario.EMPTY_IMAGE -> {
-                            val message = e.message.shouldNotBeNull()
-
-                            listOf(
-                                "Status code: 400",
-                                "Could not process image",
-                                "You uploaded an unsupported image. Please make sure your image is valid.",
-                            ).any { it in message }
-                                .shouldBe(true, "Must contain error message from the list")
-                        }
-
-                        else -> {
-                            throw e
-                        }
-                    }
-                }
-            }
-        }
-
-    open fun integration_testTextProcessingBasic(scenario: TextTestScenario, model: LLModel) =
-        runTest(timeout = 300.seconds) {
-            Models.assumeAvailable(model.provider)
-
-            val file = MediaTestUtils.createTextFileForScenario(scenario, testResourcesDir)
-
-            val prompt =
                 if (model.supports(LLMCapability.Document) && model.provider != LLMProvider.OpenAI) {
-                    prompt("text-test-${scenario.name.lowercase()}") {
-                        system("You are a helpful assistant that can analyze and process text.")
-
-                        user {
-                            markdown {
-                                +"I'm sending you a text file. Please analyze it and summarize its content."
-                            }
-
-                            textFile(KtPath(file.pathString), "text/plain")
-                        }
-                    }
+                    textFile(KtPath(file.pathString), "text/plain")
                 } else {
-                    prompt("text-test-${scenario.name.lowercase()}") {
-                        system("You are a helpful assistant that can analyze and process text.")
-
-                        user(
-                            markdown {
-                                +"I'm sending you a text file. Please analyze it and summarize its content."
-                                newline()
-                                +file.readText()
-                            }
-                        )
-                    }
-                }
-
-            withRetry {
-                try {
-                    val response = getExecutor(model).execute(prompt, model).single()
-                    checkExecutorMediaResponse(response)
-                } catch (e: LLMClientException) {
-                    when (scenario) {
-                        TextTestScenario.EMPTY_TEXT -> {
-                            if (model.provider == LLMProvider.Google) {
-                                val message = e.message.shouldNotBeNull()
-                                message.shouldContain("Status code: 400")
-                                message.shouldContain("Unable to submit request because it has an empty inlineData parameter. Add a value to the parameter and try again.")
-                            }
-                        }
-
-                        TextTestScenario.LONG_TEXT_5_MB -> {
-                            if (model.provider == LLMProvider.Anthropic) {
-                                val message = e.message.shouldNotBeNull()
-                                message.shouldContain("Status code: 400")
-                                message.shouldContain("prompt is too long")
-                            } else if (model.provider == LLMProvider.Google) {
-                                throw e
-                            }
-                        }
-
-                        else -> {
-                            throw e
-                        }
+                    markdown {
+                        +file.readText()
                     }
                 }
             }
         }
 
-    open fun integration_testAudioProcessingBasic(scenario: AudioTestScenario, model: LLModel) =
-        runTest(timeout = 300.seconds) {
-            Models.assumeAvailable(model.provider)
-            assumeTrue(
-                model.supports(LLMCapability.Audio),
-                "Model must support audio capability"
-            )
-
-            val audioFile = MediaTestUtils.createAudioFileForScenario(scenario, testResourcesDir)
-
-            val prompt = prompt("audio-test-${scenario.name.lowercase()}") {
-                system("You are a helpful assistant.")
-
-                user {
-                    text("I'm sending you an audio file. Please tell me a couple of words about it.")
-                    audio(KtPath(audioFile.pathString))
-                }
-            }
-
-            withRetry(times = 3, testName = "integration_testAudioProcessingBasic[${model.id}]") {
-                try {
-                    checkExecutorMediaResponse(getExecutor(model).execute(prompt, model).single())
-                } catch (e: LLMClientException) {
-                    if (scenario == AudioTestScenario.CORRUPTED_AUDIO) {
-                        val message = e.message.shouldNotBeNull()
-
-                        message.shouldContain("Status code: 400")
-                        if (model.provider == LLMProvider.OpenAI) {
-                            message.shouldContain("This model does not support the format you provided.")
-                        } else if (model.provider == LLMProvider.Google) {
-                            message.shouldContain("Request contains an invalid argument.")
+        withRetry {
+            try {
+                with(
+                    getExecutor(model).execute(prompt, model)
+                        .filterIsInstance<Message.Assistant>()
+                        .toSingleMessage()
+                ) {
+                    when (scenario) {
+                        MarkdownTestScenario.MALFORMED_SYNTAX, MarkdownTestScenario.MATH_NOTATION, MarkdownTestScenario.BROKEN_LINKS, MarkdownTestScenario.IRREGULAR_TABLES -> {
+                            checkResponseBasic(this)
                         }
-                    } else {
+
+                        else -> {
+                            checkExecutorMediaResponse(this)
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                when (scenario) {
+                    MarkdownTestScenario.EMPTY_MARKDOWN -> {
+                        when (model.provider) {
+                            LLMProvider.Google -> {
+                                println("Expected exception for ${scenario.name.lowercase()} image: ${e.message}")
+                            }
+                        }
+                    }
+
+                    else -> {
                         throw e
                     }
                 }
             }
         }
+    }
 
-    open fun integration_testBase64EncodedAttachment(model: LLModel) = runTest(timeout = 300.seconds) {
+    open suspend fun integration_testImageProcessing(scenario: ImageTestScenario, model: LLModel) {
+        Models.assumeAvailable(model.provider)
+        assumeTrue(
+            model.supports(LLMCapability.Vision.Image),
+            "Model must support vision capability"
+        )
+
+        val imageFile = MediaTestUtils.getImageFileForScenario(scenario, testResourcesDir)
+
+        val prompt = prompt("image-test-${scenario.name.lowercase()}") {
+            system("You are a helpful assistant that can analyze images.")
+
+            user {
+                markdown {
+                    +"I'm sending you an image. Please analyze it and identify the image format if possible."
+                }
+
+                image(KtPath(imageFile.pathString))
+            }
+        }
+
+        withRetry {
+            try {
+                checkExecutorMediaResponse(getExecutor(model).execute(prompt, model).single())
+            } catch (e: LLMClientException) {
+                // For some edge cases, exceptions are expected
+                when (scenario) {
+                    ImageTestScenario.LARGE_IMAGE_ANTHROPIC, ImageTestScenario.LARGE_IMAGE -> {
+                        val message = e.message.shouldNotBeNull()
+
+                        listOf(
+                            "Status code: 400",
+                            "image exceeds",
+                            "Could not process image"
+                        ).any { it in message }
+                            .shouldBe(true, "Must contain error message from the list")
+                    }
+
+                    ImageTestScenario.CORRUPTED_IMAGE, ImageTestScenario.EMPTY_IMAGE -> {
+                        val message = e.message.shouldNotBeNull()
+
+                        listOf(
+                            "Status code: 400",
+                            "Could not process image",
+                            "You uploaded an unsupported image. Please make sure your image is valid.",
+                        ).any { it in message }
+                            .shouldBe(true, "Must contain error message from the list")
+                    }
+
+                    else -> {
+                        throw e
+                    }
+                }
+            }
+        }
+    }
+
+    open suspend fun integration_testTextProcessingBasic(scenario: TextTestScenario, model: LLModel) {
+        Models.assumeAvailable(model.provider)
+
+        val file = MediaTestUtils.createTextFileForScenario(scenario, testResourcesDir)
+
+        val prompt =
+            if (model.supports(LLMCapability.Document) && model.provider != LLMProvider.OpenAI) {
+                prompt("text-test-${scenario.name.lowercase()}") {
+                    system("You are a helpful assistant that can analyze and process text.")
+
+                    user {
+                        markdown {
+                            +"I'm sending you a text file. Please analyze it and summarize its content."
+                        }
+
+                        textFile(KtPath(file.pathString), "text/plain")
+                    }
+                }
+            } else {
+                prompt("text-test-${scenario.name.lowercase()}") {
+                    system("You are a helpful assistant that can analyze and process text.")
+
+                    user(
+                        markdown {
+                            +"I'm sending you a text file. Please analyze it and summarize its content."
+                            newline()
+                            +file.readText()
+                        }
+                    )
+                }
+            }
+
+        withRetry {
+            try {
+                val response = getExecutor(model).execute(prompt, model).single()
+                checkExecutorMediaResponse(response)
+            } catch (e: LLMClientException) {
+                when (scenario) {
+                    TextTestScenario.EMPTY_TEXT -> {
+                        if (model.provider == LLMProvider.Google) {
+                            val message = e.message.shouldNotBeNull()
+                            message.shouldContain("Status code: 400")
+                            message.shouldContain("Unable to submit request because it has an empty inlineData parameter. Add a value to the parameter and try again.")
+                        }
+                    }
+
+                    TextTestScenario.LONG_TEXT_5_MB -> {
+                        if (model.provider == LLMProvider.Anthropic) {
+                            val message = e.message.shouldNotBeNull()
+                            message.shouldContain("Status code: 400")
+                            message.shouldContain("prompt is too long")
+                        } else if (model.provider == LLMProvider.Google) {
+                            throw e
+                        }
+                    }
+
+                    else -> {
+                        throw e
+                    }
+                }
+            }
+        }
+    }
+
+    open suspend fun integration_testAudioProcessingBasic(scenario: AudioTestScenario, model: LLModel) {
+        Models.assumeAvailable(model.provider)
+        assumeTrue(
+            model.supports(LLMCapability.Audio),
+            "Model must support audio capability"
+        )
+
+        val audioFile = MediaTestUtils.createAudioFileForScenario(scenario, testResourcesDir)
+
+        val prompt = prompt("audio-test-${scenario.name.lowercase()}") {
+            system("You are a helpful assistant.")
+
+            user {
+                text("I'm sending you an audio file. Please tell me a couple of words about it.")
+                audio(KtPath(audioFile.pathString))
+            }
+        }
+
+        withRetry(times = 3, testName = "integration_testAudioProcessingBasic[${model.id}]") {
+            try {
+                checkExecutorMediaResponse(getExecutor(model).execute(prompt, model).single())
+            } catch (e: LLMClientException) {
+                if (scenario == AudioTestScenario.CORRUPTED_AUDIO) {
+                    val message = e.message.shouldNotBeNull()
+
+                    message.shouldContain("Status code: 400")
+                    if (model.provider == LLMProvider.OpenAI) {
+                        message.shouldContain("This model does not support the format you provided.")
+                    } else if (model.provider == LLMProvider.Google) {
+                        message.shouldContain("Request contains an invalid argument.")
+                    }
+                } else {
+                    throw e
+                }
+            }
+        }
+    }
+
+    open suspend fun integration_testBase64EncodedAttachment(model: LLModel) {
         Models.assumeAvailable(model.provider)
 
         assumeTrue(
@@ -696,7 +688,7 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testUrlBasedAttachment(model: LLModel) = runTest(timeout = 300.seconds) {
+    open suspend fun integration_testUrlBasedAttachment(model: LLModel) {
         Models.assumeAvailable(model.provider)
         assumeTrue(model.provider !== LLMProvider.Google, "Google models do not support URL attachments")
 
@@ -731,7 +723,7 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testStructuredOutputNative(model: LLModel) = runTest {
+    open suspend fun integration_testStructuredOutputNative(model: LLModel) {
         assumeTrue(
             model.supports(LLMCapability.Schema.JSON.Standard),
             "Model does not support Standard JSON Schema"
@@ -751,7 +743,7 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testStructuredOutputNativeWithFixingParser(model: LLModel) = runTest {
+    open suspend fun integration_testStructuredOutputNativeWithFixingParser(model: LLModel) {
         assumeTrue(
             model.supports(LLMCapability.Schema.JSON.Standard),
             "Model does not support Standard JSON Schema"
@@ -771,7 +763,7 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testStructuredOutputManual(model: LLModel) = runTest {
+    open suspend fun integration_testStructuredOutputManual(model: LLModel) {
         assumeTrue(
             model.provider !== LLMProvider.Google,
             "Google models fail to return manually requested structured output without fixing"
@@ -797,7 +789,7 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testStructuredOutputManualWithFixingParser(model: LLModel) = runTest {
+    open suspend fun integration_testStructuredOutputManualWithFixingParser(model: LLModel) {
         assumeFalse(
             (model.id.contains("flash-lite")),
             "Gemini Flash Lite models fail to return manually requested structured output"
@@ -817,7 +809,7 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testToolChoiceRequired(model: LLModel) = runTest(timeout = 300.seconds) {
+    open suspend fun integration_testToolChoiceRequired(model: LLModel) {
         Models.assumeAvailable(model.provider)
         assumeTrue(model.supports(LLMCapability.ToolChoice), "Model $model does not support tool choice")
 
@@ -843,7 +835,7 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testToolChoiceNone(model: LLModel) = runTest(timeout = 300.seconds) {
+    open suspend fun integration_testToolChoiceNone(model: LLModel) {
         Models.assumeAvailable(model.provider)
 
         assumeTrue(model.provider != LLMProvider.Bedrock, "Bedrock API doesn't support 'none' tool choice.")
@@ -876,7 +868,7 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testToolChoiceNamed(model: LLModel) = runTest(timeout = 300.seconds) {
+    open suspend fun integration_testToolChoiceNamed(model: LLModel) {
         Models.assumeAvailable(model.provider)
 
         assumeTrue(
@@ -909,10 +901,10 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testEmbed(model: LLModel) = runTest {
+    open suspend fun integration_testEmbed(model: LLModel) {
         val client = getLLMClient(model)
         if (client !is LLMEmbeddingProvider) {
-            return@runTest
+            return
         }
         val testText = "integration test embedding"
         client.embed(testText, model) shouldNotBeNull {
@@ -924,7 +916,7 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testMultipleSystemMessages(model: LLModel) = runTest(timeout = 300.seconds) {
+    open suspend fun integration_testMultipleSystemMessages(model: LLModel) {
         Models.assumeAvailable(model.provider)
 
         val prompt = prompt("multiple-system-messages-test", createNoReasoningParams(model)) {
@@ -939,7 +931,7 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testSingleMessageModeration(model: LLModel) = runTest(timeout = 300.seconds) {
+    open suspend fun integration_testSingleMessageModeration(model: LLModel) {
         // For Bedrock, moderation is done via guardrails at the client level, not model capabilities
         assumeTrue(
             model.provider == LLMProvider.Bedrock || model.supports(LLMCapability.Moderation),
@@ -969,7 +961,7 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testMultipleMessagesModeration(model: LLModel) = runTest(timeout = 300.seconds) {
+    open suspend fun integration_testMultipleMessagesModeration(model: LLModel) {
         // For Bedrock, moderation is done via guardrails at the client level, not model capabilities
         assumeTrue(
             model.provider == LLMProvider.Bedrock || model.supports(LLMCapability.Moderation),
@@ -1039,7 +1031,7 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testGetModels(provider: LLMProvider): Unit = runBlocking {
+    open suspend fun integration_testGetModels(provider: LLMProvider) {
         withClue("Models list should not be empty") {
             getLLMClientForProvider(provider).models().shouldNotBeEmpty()
         }
@@ -1048,7 +1040,7 @@ abstract class ExecutorIntegrationTestBase {
     private fun List<Message.Assistant>.toSingleMessage(): Message.Assistant =
         Message.Assistant(parts = flatMap { it.parts }, metaInfo = ResponseMetaInfo.Empty)
 
-    open fun integration_testReasoningCapability(model: LLModel) = runTest(timeout = 300.seconds) {
+    open suspend fun integration_testReasoningCapability(model: LLModel) {
         Models.assumeAvailable(model.provider)
 
         val params = createReasoningParams(model)
@@ -1067,7 +1059,7 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testReasoningWithEncryption(model: LLModel) = runTest(timeout = 300.seconds) {
+    open suspend fun integration_testReasoningWithEncryption(model: LLModel) {
         with(model.provider) {
             Models.assumeAvailable(this)
             assumeTrue(
@@ -1096,7 +1088,7 @@ abstract class ExecutorIntegrationTestBase {
     }
 
     // This test targets models that support/require passing reasoning back (Google Gemini 3)
-    open fun integration_testReasoningMultiStep(model: LLModel) = runTest(timeout = 300.seconds) {
+    open suspend fun integration_testReasoningMultiStep(model: LLModel) {
         Models.assumeAvailable(model.provider)
 
         val params = createReasoningParams(model)
@@ -1131,7 +1123,7 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testReasoningStreamingSummaryDeltas(model: LLModel) = runTest(timeout = 300.seconds) {
+    open suspend fun integration_testReasoningStreamingSummaryDeltas(model: LLModel) {
         Models.assumeAvailable(model.provider)
         assumeTrue(
             model.provider == LLMProvider.OpenAI,
@@ -1172,7 +1164,7 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testReasoningStreamingWithEncryptedContent(model: LLModel) = runTest(timeout = 300.seconds) {
+    open suspend fun integration_testReasoningStreamingWithEncryptedContent(model: LLModel) {
         Models.assumeAvailable(model.provider)
         assumeTrue(
             model.provider == LLMProvider.OpenAI,
@@ -1208,7 +1200,7 @@ abstract class ExecutorIntegrationTestBase {
         }
     }
 
-    open fun integration_testExecuteStreamingWithTools(model: LLModel) = runTest(timeout = 300.seconds) {
+    open suspend fun integration_testExecuteStreamingWithTools(model: LLModel) {
         Models.assumeAvailable(model.provider)
         assumeTrue(model.supports(LLMCapability.Tools), "Model $model does not support tools")
         assumeTrue(

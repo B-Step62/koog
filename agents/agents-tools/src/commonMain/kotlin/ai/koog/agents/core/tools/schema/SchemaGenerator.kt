@@ -23,6 +23,10 @@ import kotlinx.schema.json.PropertyDefinition
 import kotlinx.schema.json.ReferencePropertyDefinition
 import kotlinx.schema.json.StringPropertyDefinition
 import kotlinx.schema.json.ValuePropertyDefinition
+import kotlinx.serialization.json.ClassDiscriminatorMode
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
 
 internal val serializationGenerator by lazy {
     SerializationClassJsonSchemaGenerator(
@@ -32,7 +36,10 @@ internal val serializationGenerator by lazy {
                     .filterIsInstance<LLMDescription>()
                     .firstOrNull()?.description
             }
-        )
+        ),
+        json = Json {
+            classDiscriminatorMode = ClassDiscriminatorMode.POLYMORPHIC
+        }
     )
 }
 
@@ -57,7 +64,7 @@ internal fun getToolDescriptor(
             ToolParameterDescriptor(
                 name = name,
                 description = property.descriptionOrEmpty,
-                type = property.toToolParameterType(schema)
+                type = property.toToolParameterType(schema.defs)
             )
         }
         .partition { it.name in schema.required }
@@ -72,9 +79,11 @@ internal fun getToolDescriptor(
 
 /**
  * Converts a JSON schema property representation [PropertyDefinition] to our tool parameter representation [ToolParameterType].
- * @param schema JSON schema for which the whole tool descriptor generation is performed.
+ * @param defs JSON schema definitions map for resolving references.
  */
-private fun PropertyDefinition.toToolParameterType(schema: JsonSchema): ToolParameterType = when (this) {
+internal fun PropertyDefinition.toToolParameterType(
+    defs: Map<String, PropertyDefinition>?
+): ToolParameterType = when (this) {
     is ValuePropertyDefinition<*> -> {
         val type = this.type
             ?.takeIf { it.isNotEmpty() }
@@ -85,11 +94,16 @@ private fun PropertyDefinition.toToolParameterType(schema: JsonSchema): ToolPara
         val parameterType = when (this) {
             is StringPropertyDefinition -> {
                 val enum = this.enum
+                val const = (this.constValue as? JsonPrimitive)?.contentOrNull
 
-                if (enum != null) {
-                    ToolParameterType.Enum(enum.toTypedArray())
-                } else {
-                    ToolParameterType.String
+                when {
+                    // Normal enum
+                    enum != null -> ToolParameterType.Enum(enum.toTypedArray())
+
+                    // Treat consts as enums with a single value. This is used with polymorphic discriminators
+                    const != null -> ToolParameterType.Enum(arrayOf(const))
+
+                    else -> ToolParameterType.String
                 }
             }
 
@@ -104,7 +118,7 @@ private fun PropertyDefinition.toToolParameterType(schema: JsonSchema): ToolPara
 
             is ArrayPropertyDefinition -> {
                 ToolParameterType.List(
-                    itemsType = items?.toToolParameterType(schema)
+                    itemsType = items?.toToolParameterType(defs)
                         ?: throw IllegalArgumentException("Array property definition is missing the 'items' type")
                 )
             }
@@ -117,7 +131,7 @@ private fun PropertyDefinition.toToolParameterType(schema: JsonSchema): ToolPara
                             ToolParameterDescriptor(
                                 name = name,
                                 description = (property as? CommonSchemaAttributes)?.description.orEmpty(),
-                                type = property.toToolParameterType(schema)
+                                type = property.toToolParameterType(defs)
                             )
                         },
                     requiredProperties = required.orEmpty(),
@@ -126,7 +140,7 @@ private fun PropertyDefinition.toToolParameterType(schema: JsonSchema): ToolPara
                         is DenyAdditionalProperties, null -> false
                     },
                     additionalPropertiesType = (additionalProperties as? AdditionalPropertiesSchema)?.schema
-                        ?.toToolParameterType(schema),
+                        ?.toToolParameterType(defs),
                 )
             }
 
@@ -150,18 +164,18 @@ private fun PropertyDefinition.toToolParameterType(schema: JsonSchema): ToolPara
     is ReferencePropertyDefinition -> {
         val ref = this.ref
             ?: throw IllegalArgumentException("Reference property definition is missing the 'ref' attribute")
-        val defs = schema.defs
+        val defs = defs
             ?: throw IllegalArgumentException("Encountered a ref in the JSON schema but the schema is missing the defs section")
 
         defs[ref.removePrefix(JsonSchemaConstants.Keys.REF_PREFIX)]
-            ?.toToolParameterType(schema)
+            ?.toToolParameterType(defs)
             ?: throw IllegalArgumentException("Can't find ref in defs: $ref. Schema defs: ${defs.keys}")
     }
 
     is AnyOfPropertyDefinition -> {
         ToolParameterType.AnyOf(
             types = anyOf
-                .map { ToolParameterDescriptor(type = it.toToolParameterType(schema), description = it.descriptionOrEmpty, name = "") }
+                .map { ToolParameterDescriptor(type = it.toToolParameterType(defs), description = it.descriptionOrEmpty, name = "") }
                 .toTypedArray()
         )
     }
@@ -170,7 +184,7 @@ private fun PropertyDefinition.toToolParameterType(schema: JsonSchema): ToolPara
     is OneOfPropertyDefinition -> {
         ToolParameterType.AnyOf(
             types = oneOf
-                .map { ToolParameterDescriptor(type = it.toToolParameterType(schema), description = it.descriptionOrEmpty, name = "") }
+                .map { ToolParameterDescriptor(type = it.toToolParameterType(defs), description = it.descriptionOrEmpty, name = "") }
                 .toTypedArray()
         )
     }
@@ -179,5 +193,5 @@ private fun PropertyDefinition.toToolParameterType(schema: JsonSchema): ToolPara
         throw IllegalArgumentException("Unsupported property definition type: $this")
 }
 
-private val PropertyDefinition.descriptionOrEmpty: String get() =
+internal val PropertyDefinition.descriptionOrEmpty: String get() =
     (this as? CommonSchemaAttributes)?.description.orEmpty()

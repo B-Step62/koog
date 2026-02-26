@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class SchemaGeneratorTest {
+class SerializableSchemaGeneratorTest {
     @Serializable
     @SerialName("TestClass")
     @LLMDescription("A test class")
@@ -193,6 +193,11 @@ class SchemaGeneratorTest {
                                 type = ToolParameterType.Object(
                                     properties = listOf(
                                         ToolParameterDescriptor(
+                                            name = "type",
+                                            description = "",
+                                            type = ToolParameterType.Enum(arrayOf("ClosedSubclass1"))
+                                        ),
+                                        ToolParameterDescriptor(
                                             name = "id",
                                             description = "",
                                             type = ToolParameterType.String,
@@ -203,7 +208,7 @@ class SchemaGeneratorTest {
                                             type = ToolParameterType.String,
                                         )
                                     ),
-                                    requiredProperties = listOf("id", "property1"),
+                                    requiredProperties = listOf("type", "id", "property1"),
                                     additionalProperties = false,
                                 ),
                                 name = "",
@@ -212,6 +217,11 @@ class SchemaGeneratorTest {
                             ToolParameterDescriptor(
                                 type = ToolParameterType.Object(
                                     properties = listOf(
+                                        ToolParameterDescriptor(
+                                            name = "type",
+                                            description = "",
+                                            type = ToolParameterType.Enum(arrayOf("ClosedSubclass2"))
+                                        ),
                                         ToolParameterDescriptor(
                                             name = "id",
                                             description = "",
@@ -223,7 +233,7 @@ class SchemaGeneratorTest {
                                             type = ToolParameterType.Integer,
                                         )
                                     ),
-                                    requiredProperties = listOf("id", "property2"),
+                                    requiredProperties = listOf("type", "id", "property2"),
                                     additionalProperties = false,
                                 ),
                                 name = "",

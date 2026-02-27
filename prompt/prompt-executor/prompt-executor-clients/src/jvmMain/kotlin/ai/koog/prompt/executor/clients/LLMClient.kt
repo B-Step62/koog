@@ -40,7 +40,7 @@ public actual abstract class LLMClient actual constructor() : LLMClientAPI {
         model: LLModel,
         tools: List<ToolDescriptor> = emptyList(),
         executorService: ExecutorService? = null
-    ): List<Message.Response> = runOnIOBoundDispatcher { execute(prompt, model, tools) }
+    ): List<Message.Response> = runOnIOBoundDispatcher(executorService) { execute(prompt, model, tools) }
 
     /**
      * Executes a prompt and returns a list of LLM choices.
@@ -58,7 +58,7 @@ public actual abstract class LLMClient actual constructor() : LLMClientAPI {
         model: LLModel,
         tools: List<ToolDescriptor> = emptyList(),
         executorService: ExecutorService? = null
-    ): List<LLMChoice> = runOnIOBoundDispatcher { executeMultipleChoices(prompt, model, tools) }
+    ): List<LLMChoice> = runOnIOBoundDispatcher(executorService) { executeMultipleChoices(prompt, model, tools) }
 
     /**
      * Executes a given prompt using the specified language model (LLM) and tools,
@@ -88,7 +88,7 @@ public actual abstract class LLMClient actual constructor() : LLMClientAPI {
     @JavaAPI
     @JvmOverloads
     public fun moderate(prompt: Prompt, model: LLModel, executorService: ExecutorService? = null): ModerationResult =
-        runOnIOBoundDispatcher { moderate(prompt, model) }
+        runOnIOBoundDispatcher(executorService) { moderate(prompt, model) }
 
     /**
      * Retrieves a list of ids of available Large Language Models (LLMs) supported by the client.
@@ -98,5 +98,5 @@ public actual abstract class LLMClient actual constructor() : LLMClientAPI {
     @JavaAPI
     @JvmOverloads
     public fun models(executorService: ExecutorService? = null): List<LLModel> =
-        runOnIOBoundDispatcher { models() }
+        runOnIOBoundDispatcher(executorService) { models() }
 }
